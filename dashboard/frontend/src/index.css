@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-discord-dark-600 text-white;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md font-medium transition-colors;
+  }
+  
+  .btn-primary {
+    @apply bg-discord-blurple hover:bg-discord-blurple/90 text-white;
+  }
+  
+  .btn-secondary {
+    @apply bg-discord-dark-400 hover:bg-discord-dark-300 text-white;
+  }
+  
+  .btn-danger {
+    @apply bg-discord-red hover:bg-discord-red/90 text-white;
+  }
+  
+  .input {
+    @apply w-full px-3 py-2 bg-discord-dark-500 border border-discord-dark-300 rounded-md text-white placeholder-discord-dark-100 focus:outline-none focus:ring-2 focus:ring-discord-blurple;
+  }
+  
+  .card {
+    @apply bg-discord-dark-500 rounded-lg p-6 shadow-lg;
+  }
+  
+  .card-header {
+    @apply text-xl font-semibold mb-4;
+  }
+}

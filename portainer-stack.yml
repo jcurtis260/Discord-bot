@@ -1,0 +1,169 @@
+version: '3.8'
+
+# Portainer Stack for Discord Bot
+# Deploy this stack through Portainer's web UI or CLI
+# All services are configured with health checks and proper networking
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: discord-bot-postgres
+    environment:
+      POSTGRES_DB: discord_bot
+      POSTGRES_USER: bot_user
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-changeme123}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Note: Schema files need to be added manually or via init container
+      # For automatic setup, clone repo and use local path deployment
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bot_user -d discord_bot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - bot-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: discord-bot-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - bot-network
+
+  # Discord Bot
+  bot:
+    build:
+      context: https://github.com/jcurtis260/Discord-bot.git#cursor/discord-bot-plan-ea5f
+      dockerfile: Dockerfile
+    container_name: discord-bot
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # Bot Configuration
+      DISCORD_TOKEN: ${DISCORD_TOKEN}
+      BOT_OWNER_ID: ${BOT_OWNER_ID}
+      
+      # Database
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_NAME: discord_bot
+      DATABASE_USER: bot_user
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-changeme123}
+      
+      # Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      
+      # AI Providers (Optional)
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      
+      # ChatGPT Web (Optional)
+      CHATGPT_SESSION_TOKEN: ${CHATGPT_SESSION_TOKEN:-}
+      POE_TOKEN: ${POE_TOKEN:-}
+      
+      # Dashboard Backend
+      DASHBOARD_SECRET_KEY: ${DASHBOARD_SECRET_KEY}
+      DASHBOARD_DISCORD_CLIENT_ID: ${DASHBOARD_DISCORD_CLIENT_ID}
+      DASHBOARD_DISCORD_CLIENT_SECRET: ${DASHBOARD_DISCORD_CLIENT_SECRET}
+      DASHBOARD_DISCORD_REDIRECT_URI: ${DASHBOARD_DISCORD_REDIRECT_URI:-http://localhost:3000/auth/callback}
+      DASHBOARD_API_KEY: ${DASHBOARD_API_KEY:-}
+    volumes:
+      - bot_logs:/app/logs
+      - bot_config:/app/config
+      - bot_red_cogs:/app/bot/red_cogs
+    restart: unless-stopped
+    networks:
+      - bot-network
+
+  # Dashboard Backend API
+  dashboard-backend:
+    build:
+      context: https://github.com/jcurtis260/Discord-bot.git#cursor/discord-bot-plan-ea5f:dashboard/backend
+      dockerfile: Dockerfile
+    container_name: discord-bot-dashboard-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # Database URL
+      DATABASE_URL: postgresql://bot_user:${DATABASE_PASSWORD:-changeme123}@postgres:5432/discord_bot
+      
+      # Redis URL
+      REDIS_URL: redis://redis:6379/0
+      
+      # API Configuration
+      DASHBOARD_SECRET_KEY: ${DASHBOARD_SECRET_KEY}
+      DASHBOARD_HOST: 0.0.0.0
+      DASHBOARD_PORT: ${DASHBOARD_BACKEND_INTERNAL_PORT:-8080}
+      
+      # Bot Owner
+      BOT_OWNER_ID: ${BOT_OWNER_ID}
+      
+      # Discord OAuth2
+      DASHBOARD_DISCORD_CLIENT_ID: ${DASHBOARD_DISCORD_CLIENT_ID}
+      DASHBOARD_DISCORD_CLIENT_SECRET: ${DASHBOARD_DISCORD_CLIENT_SECRET}
+      DASHBOARD_DISCORD_REDIRECT_URI: ${DASHBOARD_DISCORD_REDIRECT_URI:-http://localhost:3000/auth/callback}
+      
+      # Optional Security
+      DASHBOARD_API_KEY: ${DASHBOARD_API_KEY:-}
+    ports:
+      - "${DASHBOARD_BACKEND_PORT:-8080}:${DASHBOARD_BACKEND_INTERNAL_PORT:-8080}"
+    restart: unless-stopped
+    networks:
+      - bot-network
+
+  # Dashboard Frontend (React)
+  dashboard-frontend:
+    build:
+      context: https://github.com/jcurtis260/Discord-bot.git#cursor/discord-bot-plan-ea5f:dashboard/frontend
+      dockerfile: Dockerfile
+    container_name: discord-bot-dashboard-frontend
+    depends_on:
+      - dashboard-backend
+    environment:
+      VITE_API_URL: ${DASHBOARD_API_URL:-http://localhost:8080}
+    ports:
+      - "${DASHBOARD_FRONTEND_PORT:-3000}:3000"
+    restart: unless-stopped
+    networks:
+      - bot-network
+
+# Persistent Volumes
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  bot_logs:
+    driver: local
+  bot_config:
+    driver: local
+  bot_red_cogs:
+    driver: local
+
+# Network
+networks:
+  bot-network:
+    driver: bridge

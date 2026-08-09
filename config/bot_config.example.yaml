@@ -1,0 +1,155 @@
+# Discord Bot Configuration
+
+bot:
+  token: "YOUR_BOT_TOKEN_HERE"
+  prefix: "/"
+  status: "online"  # online, idle, dnd, invisible
+  activity: "Watching your server"
+  activity_type: "watching"  # playing, streaming, listening, watching
+  owner_id: ""  # YOUR DISCORD USER ID (REQUIRED for dashboard access)
+  
+dashboard:
+  enabled: true
+  port: 3000
+  host: "0.0.0.0"
+  https: false
+  cert_path: null
+  key_path: null
+  
+  # Security Settings
+  secret_key: "CHANGE_THIS_SECRET_KEY_FOR_PRODUCTION"  # Generate with: python -c "import secrets; print(secrets.token_urlsafe(32))"
+  session_timeout: 86400  # 24 hours in seconds
+  
+  # Discord OAuth2 (REQUIRED for login)
+  discord_client_id: ""  # Get from https://discord.com/developers/applications
+  discord_client_secret: ""  # Get from https://discord.com/developers/applications
+  discord_redirect_uri: "http://localhost:3000/auth/callback"  # Update for your domain
+  
+  # API Key (optional, for programmatic access)
+  api_key: ""  # Generate with: python -c "import secrets; print(secrets.token_urlsafe(32))"
+  
+  # IP Whitelist (optional, leave empty to allow all IPs)
+  ip_whitelist: []
+  # Example:
+  # ip_whitelist:
+  #   - "192.168.1.100"
+  #   - "10.0.0.5"
+  
+  cors_origins:
+    - "http://localhost:3000"
+    - "http://localhost:3001"
+
+database:
+  host: "localhost"
+  port: 5432
+  database: "discord_bot"
+  user: "bot_user"
+  password: "YOUR_DATABASE_PASSWORD"
+  pool_size: 10
+  max_overflow: 20
+
+redis:
+  host: "localhost"
+  port: 6379
+  db: 0
+  password: null
+
+ai:
+  enabled: true
+  provider: "openai"  # openai, anthropic, local, chatgpt_web
+  api_key: "YOUR_AI_API_KEY"
+  model: "gpt-4"  # gpt-4, gpt-3.5-turbo, claude-3-sonnet-20240229
+  
+  # Local model settings (when provider = local)
+  local_model: "microsoft/DialoGPT-medium"
+  
+  # ChatGPT Web Authentication (no API key needed)
+  # WARNING: Violates OpenAI ToS, may result in account ban
+  web_method: "revchatgpt"  # revchatgpt or poe
+  chatgpt_session_token: ""  # Get from ChatGPT cookies (__Secure-next-auth.session-token)
+  chatgpt_access_token: ""   # Alternative to session_token (from /api/auth/session)
+  poe_token: ""              # For Poe.com method (p-b cookie)
+  poe_bot: "GPT-4"           # Poe bot: ChatGPT, GPT-4, Claude-instant, Claude-2, etc.
+  
+  max_tokens: 500
+  temperature: 0.8
+  default_personality: "friendly"
+
+  
+moderation:
+  auto_mod_enabled: true
+  spam_threshold: 5  # messages per 5 seconds
+  duplicate_threshold: 3
+  max_mentions: 5
+  profanity_filter: true
+  invite_filter: true
+  link_filter: false
+  
+leveling:
+  enabled: true
+  xp_per_message: 15
+  xp_min: 10
+  xp_max: 25
+  xp_cooldown: 60  # seconds
+  voice_xp_per_minute: 5
+  announce_level_up: true
+
+economy:
+  enabled: true
+  currency_name: "Credits"
+  currency_emoji: "💰"
+  starting_balance: 100
+  daily_reward: 50
+  daily_streak_bonus: 10  # per day streak
+  weekly_reward: 500
+  message_earn_rate: 5
+  message_earn_cooldown: 60
+  voice_earn_rate: 10  # per minute
+  
+giveaways:
+  enabled: true
+  default_emoji: "🎉"
+  max_concurrent_per_server: 10
+  
+games:
+  enabled: true
+  trivia:
+    enabled: true
+    reward_per_question: 10
+    time_limit: 30  # seconds per question
+  gambling:
+    enabled: true
+    min_bet: 10
+    max_bet: 1000
+    house_edge: 0.02
+    cooldown: 30
+    
+red_compat:
+  enabled: false
+  cog_directory: "./red_cogs"
+  auto_update: false
+  allow_unsafe_cogs: false
+  
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  log_channel_id: null
+  file_logging: true
+  log_retention_days: 30
+  log_path: "../logs"
+  
+permissions:
+  moderator_roles: []
+  admin_roles: []
+  trusted_roles: []
+
+features:
+  welcome_messages: true
+  farewell_messages: true
+  reaction_roles: true
+  custom_commands: true
+  music: false
+  tickets: true
+  verification: true
+  starboard: true
+  reminders: true
+  birthdays: true
