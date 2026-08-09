@@ -9,8 +9,8 @@ A comprehensive Discord bot combining MEE6-like features with advanced AI conver
 - ✅ **Auto-Moderation** - Rule-based: spam, bad words, mass mentions, caps filter
 - ✅ **AI Moderation** - AI-powered content analysis for toxicity, NSFW, spam with user whitelist
 - ✅ **Leveling & XP** - Role rewards, leaderboards, rank cards
-- ✅ **AI Conversations** - Natural language with OpenAI, Anthropic, or local models
-- ✅ **AI Model Support** - OpenAI (GPT-4), Anthropic (Claude), or local models (GPT-2, DialoGPT)
+- ✅ **AI Conversations** - Natural language with OpenAI, Anthropic, local models, or ChatGPT web
+- ✅ **AI Providers** - OpenAI (GPT-4), Anthropic (Claude), local models, or ChatGPT web login (no API!)
 - ✅ **Economy** - Virtual currency, shop, inventory, transactions
 - ✅ **Giveaways** - Full giveaway management with entry requirements
 - ✅ **Games** - Trivia, gambling (coinflip, slots), fun games (RPS, dice)

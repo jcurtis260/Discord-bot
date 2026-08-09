@@ -37,12 +37,25 @@ redis:
 
 ai:
   enabled: true
-  provider: "openai"  # openai, anthropic, local, none
+  provider: "openai"  # openai, anthropic, local, chatgpt_web
   api_key: "YOUR_AI_API_KEY"
-  model: "gpt-4"
+  model: "gpt-4"  # gpt-4, gpt-3.5-turbo, claude-3-sonnet-20240229
+  
+  # Local model settings (when provider = local)
+  local_model: "microsoft/DialoGPT-medium"
+  
+  # ChatGPT Web Authentication (no API key needed)
+  # WARNING: Violates OpenAI ToS, may result in account ban
+  web_method: "revchatgpt"  # revchatgpt or poe
+  chatgpt_session_token: ""  # Get from ChatGPT cookies (__Secure-next-auth.session-token)
+  chatgpt_access_token: ""   # Alternative to session_token (from /api/auth/session)
+  poe_token: ""              # For Poe.com method (p-b cookie)
+  poe_bot: "GPT-4"           # Poe bot: ChatGPT, GPT-4, Claude-instant, Claude-2, etc.
+  
   max_tokens: 500
   temperature: 0.8
   default_personality: "friendly"
+
   
 moderation:
   auto_mod_enabled: true
