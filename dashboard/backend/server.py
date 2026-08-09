@@ -22,6 +22,7 @@ sys.path.append(str(Path(__file__).parent / '../../bot'))
 from modules.database import Database
 from modules.config import config
 from auth import AuthManager, require_auth, require_owner
+from settings import router as settings_router
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -41,6 +42,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include settings router
+from settings import router as settings_router
+settings_router.owner_user = owner_user
+settings_router.current_user = current_user
+app.include_router(settings_router)
 
 # Security schemes
 security_bearer = HTTPBearer(auto_error=False)
