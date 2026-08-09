@@ -199,8 +199,15 @@ class AutoMod(commands.Cog):
     @app_commands.default_permissions(manage_guild=True)
     async def automod_enable(self, interaction: discord.Interaction):
         """Enable auto-moderation."""
+        await self.bot.db.ensure_guild(interaction.guild_id)
+        
         await self.bot.db.execute(
-            "UPDATE guild_config SET automod_enabled = TRUE WHERE guild_id = $1",
+            """
+            INSERT INTO guild_config (guild_id, automod_enabled)
+            VALUES ($1, TRUE)
+            ON CONFLICT (guild_id)
+            DO UPDATE SET automod_enabled = TRUE
+            """,
             interaction.guild_id
         )
         
@@ -210,8 +217,15 @@ class AutoMod(commands.Cog):
     @app_commands.default_permissions(manage_guild=True)
     async def automod_disable(self, interaction: discord.Interaction):
         """Disable auto-moderation."""
+        await self.bot.db.ensure_guild(interaction.guild_id)
+        
         await self.bot.db.execute(
-            "UPDATE guild_config SET automod_enabled = FALSE WHERE guild_id = $1",
+            """
+            INSERT INTO guild_config (guild_id, automod_enabled)
+            VALUES ($1, FALSE)
+            ON CONFLICT (guild_id)
+            DO UPDATE SET automod_enabled = FALSE
+            """,
             interaction.guild_id
         )
         
@@ -272,8 +286,15 @@ class AutoMod(commands.Cog):
     @app_commands.default_permissions(manage_guild=True)
     async def automod_action(self, interaction: discord.Interaction, action: str):
         """Set the action for auto-mod violations."""
+        await self.bot.db.ensure_guild(interaction.guild_id)
+        
         await self.bot.db.execute(
-            "UPDATE guild_config SET automod_action = $1 WHERE guild_id = $2",
+            """
+            INSERT INTO guild_config (guild_id, automod_action)
+            VALUES ($2, $1)
+            ON CONFLICT (guild_id)
+            DO UPDATE SET automod_action = $1
+            """,
             action, interaction.guild_id
         )
         
@@ -302,8 +323,15 @@ class AutoMod(commands.Cog):
         current_words = self.bad_words_cache.get(interaction.guild_id, [])
         
         if action == "clear":
+            await self.bot.db.ensure_guild(interaction.guild_id)
+            
             await self.bot.db.execute(
-                "UPDATE guild_config SET automod_bad_words = '{}' WHERE guild_id = $1",
+                """
+                INSERT INTO guild_config (guild_id, automod_bad_words)
+                VALUES ($1, '{}')
+                ON CONFLICT (guild_id)
+                DO UPDATE SET automod_bad_words = '{}'
+                """,
                 interaction.guild_id
             )
             self.bad_words_cache[interaction.guild_id] = []
@@ -334,8 +362,15 @@ class AutoMod(commands.Cog):
             message = f"✅ Removed {len(word_list)} word(s) from the filter."
         
         # Update database
+        await self.bot.db.ensure_guild(interaction.guild_id)
+        
         await self.bot.db.execute(
-            "UPDATE guild_config SET automod_bad_words = $1 WHERE guild_id = $2",
+            """
+            INSERT INTO guild_config (guild_id, automod_bad_words)
+            VALUES ($2, $1)
+            ON CONFLICT (guild_id)
+            DO UPDATE SET automod_bad_words = $1
+            """,
             current_words, interaction.guild_id
         )
         

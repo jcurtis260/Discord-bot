@@ -115,6 +115,52 @@ class Database:
         """
         async with self.acquire() as conn:
             return await conn.fetchval(query, *args)
+    
+    async def ensure_user(self, guild_id: int, user_id: int) -> None:
+        """
+        Ensure a user exists in the users and guild_members tables.
+        This prevents foreign key violations when creating related records.
+        
+        Args:
+            guild_id: Discord guild ID
+            user_id: Discord user ID
+        """
+        # Ensure user exists in users table
+        await self.execute(
+            """
+            INSERT INTO users (user_id)
+            VALUES ($1)
+            ON CONFLICT (user_id) DO NOTHING
+            """,
+            user_id
+        )
+        
+        # Ensure user is in guild_members table
+        await self.execute(
+            """
+            INSERT INTO guild_members (guild_id, user_id, xp, level, message_count)
+            VALUES ($1, $2, 0, 0, 0)
+            ON CONFLICT (guild_id, user_id) DO NOTHING
+            """,
+            guild_id, user_id
+        )
+    
+    async def ensure_guild(self, guild_id: int) -> None:
+        """
+        Ensure a guild exists in the guild_config table.
+        This prevents foreign key violations when creating related records.
+        
+        Args:
+            guild_id: Discord guild ID
+        """
+        await self.execute(
+            """
+            INSERT INTO guild_config (guild_id)
+            VALUES ($1)
+            ON CONFLICT (guild_id) DO NOTHING
+            """,
+            guild_id
+        )
 
 
 class RedisCache:

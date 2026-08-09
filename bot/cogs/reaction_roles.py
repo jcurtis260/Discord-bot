@@ -95,7 +95,7 @@ class ReactionRoles(commands.Cog):
             INSERT INTO reaction_roles (guild_id, message_id, channel_id, emoji, role_id)
             VALUES ($1, $2, $3, $4, $5)
             ON CONFLICT (guild_id, message_id, emoji) 
-            DO UPDATE SET role_id = $5
+            DO UPDATE SET role_id = EXCLUDED.role_id, channel_id = EXCLUDED.channel_id
             """,
             interaction.guild_id, message_id_int, message.channel.id, emoji, role.id
         )

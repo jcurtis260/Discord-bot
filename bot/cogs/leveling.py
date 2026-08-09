@@ -102,17 +102,28 @@ class Leveling(commands.Cog):
         if not config or not config['xp_enabled']:
             return
         
-        # Check cooldown
-        cache_key = f"xp_cooldown:{message.guild.id}:{message.author.id}"
-        if await self.bot.cache.exists(cache_key):
-            return  # User is on cooldown
+        # Check cooldown (with Redis null safety)
+        if self.bot.cache:
+            cache_key = f"xp_cooldown:{message.guild.id}:{message.author.id}"
+            if await self.bot.cache.exists(cache_key):
+                return  # User is on cooldown
+        else:
+            # Fallback: check database for cooldown if Redis unavailable
+            user_data = await self.get_user_data(message.guild.id, message.author.id)
+            if user_data.get('last_xp_gain'):
+                cooldown = timedelta(seconds=config['xp_cooldown'])
+                time_since_last = datetime.utcnow() - user_data['last_xp_gain']
+                if time_since_last < cooldown:
+                    return  # User is on cooldown
         
         # Add XP
         xp_amount = config['xp_rate']
         new_level, leveled_up = await self.add_xp(message.guild.id, message.author.id, xp_amount)
         
-        # Set cooldown
-        await self.bot.cache.set(cache_key, "1", ttl=config['xp_cooldown'])
+        # Set cooldown (with Redis null safety)
+        if self.bot.cache:
+            cache_key = f"xp_cooldown:{message.guild.id}:{message.author.id}"
+            await self.bot.cache.set(cache_key, "1", ttl=config['xp_cooldown'])
         
         # Handle level up
         if leveled_up:

@@ -10,8 +10,24 @@ from discord import app_commands
 from discord.ext import commands
 from typing import Optional, List
 import asyncio
-import openai
-from anthropic import Anthropic
+import logging
+
+# Try to import AI libraries
+try:
+    import openai
+    HAS_OPENAI = True
+except ImportError:
+    HAS_OPENAI = False
+    openai = None
+
+try:
+    from anthropic import Anthropic
+    HAS_ANTHROPIC = True
+except ImportError:
+    HAS_ANTHROPIC = False
+    Anthropic = None
+
+logger = logging.getLogger(__name__)
 
 
 class AIMod(commands.Cog):
@@ -34,13 +50,19 @@ class AIMod(commands.Cog):
         api_key = self.bot.config.get('ai.api_key')
         
         if not api_key:
-            print("⚠️ AI Moderation: No API key configured")
+            logger.warning("⚠️ AI Moderation: No API key configured")
             return
         
         if ai_provider == 'openai':
-            self.openai_client = openai.OpenAI(api_key=api_key)
+            if HAS_OPENAI:
+                self.openai_client = openai.OpenAI(api_key=api_key)
+            else:
+                logger.error("⚠️ AI Moderation: OpenAI provider selected but 'openai' package not installed. Run: pip install openai")
         elif ai_provider == 'anthropic':
-            self.anthropic_client = Anthropic(api_key=api_key)
+            if HAS_ANTHROPIC:
+                self.anthropic_client = Anthropic(api_key=api_key)
+            else:
+                logger.error("⚠️ AI Moderation: Anthropic provider selected but 'anthropic' package not installed. Run: pip install anthropic")
     
     async def cog_load(self):
         """Load whitelisted users from database."""
@@ -65,7 +87,7 @@ class AIMod(commands.Cog):
                 
                 self.whitelisted_users[guild_id].add(user_id)
         except Exception as e:
-            print(f"Error loading AI mod whitelist: {e}")
+            logger.error(f"Error loading AI mod whitelist: {e}")
     
     async def _get_ai_mod_config(self, guild_id: int) -> dict:
         """Get AI moderation configuration for a guild."""
@@ -183,7 +205,7 @@ Only flag messages that clearly violate Discord's community guidelines."""
                 }
         
         except Exception as e:
-            print(f"AI moderation analysis error: {e}")
+            logger.error(f"AI moderation analysis error: {e}")
             return {
                 'flagged': False,
                 'confidence': 0.0,
@@ -314,8 +336,16 @@ Only flag messages that clearly violate Discord's community guidelines."""
     @app_commands.default_permissions(administrator=True)
     async def aimod_enable(self, interaction: discord.Interaction):
         """Enable AI moderation."""
+        # Ensure guild config exists
+        await self.bot.db.ensure_guild(interaction.guild_id)
+        
         await self.bot.db.execute(
-            "UPDATE guild_config SET ai_mod_enabled = TRUE WHERE guild_id = $1",
+            """
+            INSERT INTO guild_config (guild_id, ai_mod_enabled)
+            VALUES ($1, TRUE)
+            ON CONFLICT (guild_id)
+            DO UPDATE SET ai_mod_enabled = TRUE
+            """,
             interaction.guild_id
         )
         
@@ -329,8 +359,15 @@ Only flag messages that clearly violate Discord's community guidelines."""
     @app_commands.default_permissions(administrator=True)
     async def aimod_disable(self, interaction: discord.Interaction):
         """Disable AI moderation."""
+        await self.bot.db.ensure_guild(interaction.guild_id)
+        
         await self.bot.db.execute(
-            "UPDATE guild_config SET ai_mod_enabled = FALSE WHERE guild_id = $1",
+            """
+            INSERT INTO guild_config (guild_id, ai_mod_enabled)
+            VALUES ($1, FALSE)
+            ON CONFLICT (guild_id)
+            DO UPDATE SET ai_mod_enabled = FALSE
+            """,
             interaction.guild_id
         )
         
@@ -406,8 +443,15 @@ Only flag messages that clearly violate Discord's community guidelines."""
         
         threshold_decimal = threshold / 100.0
         
+        await self.bot.db.ensure_guild(interaction.guild_id)
+        
         await self.bot.db.execute(
-            "UPDATE guild_config SET ai_mod_threshold = $1 WHERE guild_id = $2",
+            """
+            INSERT INTO guild_config (guild_id, ai_mod_threshold)
+            VALUES ($2, $1)
+            ON CONFLICT (guild_id)
+            DO UPDATE SET ai_mod_threshold = $1
+            """,
             threshold_decimal, interaction.guild_id
         )
         
@@ -427,8 +471,15 @@ Only flag messages that clearly violate Discord's community guidelines."""
     @app_commands.default_permissions(administrator=True)
     async def aimod_action(self, interaction: discord.Interaction, action: str):
         """Set the action for AI mod violations."""
+        await self.bot.db.ensure_guild(interaction.guild_id)
+        
         await self.bot.db.execute(
-            "UPDATE guild_config SET ai_mod_action = $1 WHERE guild_id = $2",
+            """
+            INSERT INTO guild_config (guild_id, ai_mod_action)
+            VALUES ($2, $1)
+            ON CONFLICT (guild_id)
+            DO UPDATE SET ai_mod_action = $1
+            """,
             action, interaction.guild_id
         )
         
@@ -447,8 +498,15 @@ Only flag messages that clearly violate Discord's community guidelines."""
         """Set log channel."""
         channel_id = channel.id if channel else None
         
+        await self.bot.db.ensure_guild(interaction.guild_id)
+        
         await self.bot.db.execute(
-            "UPDATE guild_config SET ai_mod_log_channel = $1 WHERE guild_id = $2",
+            """
+            INSERT INTO guild_config (guild_id, ai_mod_log_channel)
+            VALUES ($2, $1)
+            ON CONFLICT (guild_id)
+            DO UPDATE SET ai_mod_log_channel = $1
+            """,
             channel_id, interaction.guild_id
         )
         
@@ -582,24 +640,41 @@ Only flag messages that clearly violate Discord's community guidelines."""
         nsfw: Optional[bool] = None
     ):
         """Toggle specific checks."""
+        await self.bot.db.ensure_guild(interaction.guild_id)
+        
         updates = []
         if toxicity is not None:
             await self.bot.db.execute(
-                "UPDATE guild_config SET ai_mod_check_toxicity = $1 WHERE guild_id = $2",
+                """
+                INSERT INTO guild_config (guild_id, ai_mod_check_toxicity)
+                VALUES ($2, $1)
+                ON CONFLICT (guild_id)
+                DO UPDATE SET ai_mod_check_toxicity = $1
+                """,
                 toxicity, interaction.guild_id
             )
             updates.append(f"Toxicity: {'✅ Enabled' if toxicity else '❌ Disabled'}")
         
         if spam is not None:
             await self.bot.db.execute(
-                "UPDATE guild_config SET ai_mod_check_spam = $1 WHERE guild_id = $2",
+                """
+                INSERT INTO guild_config (guild_id, ai_mod_check_spam)
+                VALUES ($2, $1)
+                ON CONFLICT (guild_id)
+                DO UPDATE SET ai_mod_check_spam = $1
+                """,
                 spam, interaction.guild_id
             )
             updates.append(f"Spam: {'✅ Enabled' if spam else '❌ Disabled'}")
         
         if nsfw is not None:
             await self.bot.db.execute(
-                "UPDATE guild_config SET ai_mod_check_nsfw = $1 WHERE guild_id = $2",
+                """
+                INSERT INTO guild_config (guild_id, ai_mod_check_nsfw)
+                VALUES ($2, $1)
+                ON CONFLICT (guild_id)
+                DO UPDATE SET ai_mod_check_nsfw = $1
+                """,
                 nsfw, interaction.guild_id
             )
             updates.append(f"NSFW: {'✅ Enabled' if nsfw else '❌ Disabled'}")
