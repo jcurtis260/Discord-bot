@@ -382,11 +382,17 @@ DASHBOARD_PORT=3000
 
 For detailed information, see these guides:
 
-- **[DASHBOARD_SECURITY.md](DASHBOARD_SECURITY.md)** - Complete guide to securing the web dashboard with Discord OAuth2, API keys, and IP whitelisting. **Read this first before setting up the dashboard!**
+### Essential Setup Guides
+- **[PORTAINER_DEPLOYMENT.md](PORTAINER_DEPLOYMENT.md)** - **NEW!** Deploy and manage your bot with Portainer's web UI (easiest method!)
+- **[DASHBOARD_SECURITY.md](DASHBOARD_SECURITY.md)** - Complete guide to securing the web dashboard with Discord OAuth2, API keys, and IP whitelisting
 - **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - Step-by-step installation and configuration guide
+
+### Configuration Guides
 - **[BOT_CUSTOMIZATION.md](BOT_CUSTOMIZATION.md)** - Customize bot avatar, name, status, and per-server settings
 - **[AI_SETUP.md](AI_SETUP.md)** - Configure AI providers (OpenAI, Anthropic, local models)
 - **[CHATGPT_WEB_SETUP.md](CHATGPT_WEB_SETUP.md)** - Use ChatGPT without API keys (unofficial method)
+
+### Development
 - **[BUGS_AND_IMPROVEMENTS.md](BUGS_AND_IMPROVEMENTS.md)** - Known issues, code review findings, and improvement roadmap
 - **[dashboard/README.md](dashboard/README.md)** - Dashboard development and API documentation
 
