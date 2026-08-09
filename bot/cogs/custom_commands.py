@@ -41,7 +41,7 @@ class CustomCommands(commands.Cog):
         
         # Check if command already exists
         existing = await self.bot.db.fetchrow(
-            "SELECT id FROM custom_commands WHERE guild_id = $1 AND name = $2",
+            "SELECT id FROM custom_commands WHERE guild_id = $1 AND command_name = $2",
             interaction.guild_id, name
         )
         
@@ -55,7 +55,7 @@ class CustomCommands(commands.Cog):
         # Add command
         await self.bot.db.execute(
             """
-            INSERT INTO custom_commands (guild_id, name, response, creator_id)
+            INSERT INTO custom_commands (guild_id, command_name, response, created_by)
             VALUES ($1, $2, $3, $4)
             """,
             interaction.guild_id, name, response, interaction.user.id
@@ -85,7 +85,7 @@ class CustomCommands(commands.Cog):
             """
             UPDATE custom_commands 
             SET response = $1, updated_at = NOW()
-            WHERE guild_id = $2 AND name = $3
+            WHERE guild_id = $2 AND command_name = $3
             """,
             response, interaction.guild_id, name
         )
@@ -109,7 +109,7 @@ class CustomCommands(commands.Cog):
         name = name.lower().strip()
         
         result = await self.bot.db.execute(
-            "DELETE FROM custom_commands WHERE guild_id = $1 AND name = $2",
+            "DELETE FROM custom_commands WHERE guild_id = $1 AND command_name = $2",
             interaction.guild_id, name
         )
         
@@ -129,10 +129,10 @@ class CustomCommands(commands.Cog):
         """List all custom commands for this server."""
         commands_data = await self.bot.db.fetch(
             """
-            SELECT name, use_count 
+            SELECT command_name, usage_count 
             FROM custom_commands 
             WHERE guild_id = $1 
-            ORDER BY name
+            ORDER BY command_name
             """,
             interaction.guild_id
         )
@@ -153,8 +153,8 @@ class CustomCommands(commands.Cog):
         # Group into chunks
         command_list = []
         for cmd in commands_data:
-            uses = f" ({cmd['use_count']} uses)" if cmd['use_count'] > 0 else ""
-            command_list.append(f"`{cmd['name']}`{uses}")
+            uses = f" ({cmd['usage_count']} uses)" if cmd['usage_count'] > 0 else ""
+            command_list.append(f"`{cmd['command_name']}`{uses}")
         
         # Split into fields if too many
         chunk_size = 20
@@ -177,7 +177,7 @@ class CustomCommands(commands.Cog):
         cmd = await self.bot.db.fetchrow(
             """
             SELECT * FROM custom_commands 
-            WHERE guild_id = $1 AND name = $2
+            WHERE guild_id = $1 AND command_name = $2
             """,
             interaction.guild_id, name
         )
@@ -189,7 +189,7 @@ class CustomCommands(commands.Cog):
             )
             return
         
-        creator = await self.bot.fetch_user(cmd['creator_id'])
+        creator = await self.bot.fetch_user(cmd['created_by'])
         
         embed = discord.Embed(
             title=f"📝 Custom Command: {name}",
@@ -198,7 +198,7 @@ class CustomCommands(commands.Cog):
         )
         
         embed.add_field(name="Creator", value=creator.mention if creator else "Unknown", inline=True)
-        embed.add_field(name="Uses", value=str(cmd['use_count']), inline=True)
+        embed.add_field(name="Uses", value=str(cmd['usage_count']), inline=True)
         embed.add_field(
             name="Created",
             value=f"<t:{int(cmd['created_at'].timestamp())}:R>",
@@ -225,7 +225,7 @@ class CustomCommands(commands.Cog):
         cmd = await self.bot.db.fetchrow(
             """
             SELECT response FROM custom_commands 
-            WHERE guild_id = $1 AND name = $2
+            WHERE guild_id = $1 AND command_name = $2
             """,
             message.guild.id, command_name
         )
@@ -235,8 +235,8 @@ class CustomCommands(commands.Cog):
             await self.bot.db.execute(
                 """
                 UPDATE custom_commands 
-                SET use_count = use_count + 1 
-                WHERE guild_id = $1 AND name = $2
+                SET usage_count = usage_count + 1 
+                WHERE guild_id = $1 AND command_name = $2
                 """,
                 message.guild.id, command_name
             )

@@ -76,8 +76,8 @@ class Giveaway(commands.Cog):
                 channel = guild.get_channel(giveaway['channel_id'])
                 if channel:
                     await channel.send(f"🎉 Giveaway for **{giveaway['prize']}** ended with no entries!")
-            except:
-                pass
+            except (discord.Forbidden, discord.HTTPException, AttributeError) as e:
+                logger.error(f"Failed to send no-entries message: {e}")
             return
         
         # Pick winners
@@ -131,8 +131,8 @@ class Giveaway(commands.Cog):
                         await user.send(
                             f"🎉 Congratulations! You won **{giveaway['prize']}** in {guild.name}!"
                         )
-                    except:
-                        pass
+                    except (discord.Forbidden, discord.HTTPException, discord.NotFound) as e:
+                        logger.debug(f"Could not DM winner {winner_id}: {e}")
         except Exception as e:
             logger.error(f"Failed to announce giveaway winners: {e}")
     

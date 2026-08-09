@@ -18,7 +18,8 @@ A comprehensive Discord bot combining MEE6-like features with advanced AI conver
 - ✅ **Reaction Roles** - Easy role assignment via reactions
 - ✅ **Custom Commands** - Create server-specific commands with usage tracking
 - ✅ **Reminders** - Set personal reminders with natural language time parsing
-- ✅ **Web Dashboard** - Locally-hosted management interface
+- ✅ **Web Dashboard** - Locally-hosted management interface with secure authentication
+- ✅ **Dashboard Security** - Discord OAuth2, owner-only access, API keys, IP whitelisting
 - ✅ **Bot Customization** - Change avatar, name, status, nickname per-server
 
 ### Advanced Features
@@ -74,6 +75,35 @@ python main.py
 ```
 
 6. **Set up dashboard (optional)**
+
+**⚠️ IMPORTANT: Dashboard Security Required!**
+
+Before accessing the dashboard, you MUST configure security settings. See [`DASHBOARD_SECURITY.md`](DASHBOARD_SECURITY.md) for detailed setup.
+
+**Quick security setup:**
+
+```bash
+# 1. Get your Discord User ID
+# Discord Settings → Advanced → Developer Mode (ON)
+# Right-click your username → Copy User ID
+
+# 2. Generate secure keys
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+
+# 3. Get Discord OAuth2 credentials
+# https://discord.com/developers/applications
+# Your App → OAuth2 → Copy Client ID and Client Secret
+# Add redirect: http://localhost:3000/auth/callback
+
+# 4. Configure in .env or config/bot_config.yaml
+BOT_OWNER_ID=your_discord_user_id
+DASHBOARD_SECRET_KEY=generated_secret_key
+DASHBOARD_DISCORD_CLIENT_ID=your_client_id
+DASHBOARD_DISCORD_CLIENT_SECRET=your_client_secret
+```
+
+**Start dashboard:**
+
 ```bash
 # Backend
 cd dashboard/backend
@@ -86,7 +116,9 @@ npm install
 npm run dev
 ```
 
-Access dashboard at `http://localhost:3000`
+Access dashboard at `http://localhost:3000` and log in with Discord.
+
+**📖 Full Guide:** See [`DASHBOARD_SECURITY.md`](DASHBOARD_SECURITY.md) for complete setup, hosting options, and security best practices.
 
 ## Docker Deployment
 
@@ -345,6 +377,18 @@ DASHBOARD_PORT=3000
 - Verify AI API key is set
 - Check AI is enabled in channel settings
 - Review AI engagement rate settings
+
+## Documentation
+
+For detailed information, see these guides:
+
+- **[DASHBOARD_SECURITY.md](DASHBOARD_SECURITY.md)** - Complete guide to securing the web dashboard with Discord OAuth2, API keys, and IP whitelisting. **Read this first before setting up the dashboard!**
+- **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - Step-by-step installation and configuration guide
+- **[BOT_CUSTOMIZATION.md](BOT_CUSTOMIZATION.md)** - Customize bot avatar, name, status, and per-server settings
+- **[AI_SETUP.md](AI_SETUP.md)** - Configure AI providers (OpenAI, Anthropic, local models)
+- **[CHATGPT_WEB_SETUP.md](CHATGPT_WEB_SETUP.md)** - Use ChatGPT without API keys (unofficial method)
+- **[BUGS_AND_IMPROVEMENTS.md](BUGS_AND_IMPROVEMENTS.md)** - Known issues, code review findings, and improvement roadmap
+- **[dashboard/README.md](dashboard/README.md)** - Dashboard development and API documentation
 
 ## Support
 

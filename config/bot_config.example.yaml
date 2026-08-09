@@ -6,6 +6,7 @@ bot:
   status: "online"  # online, idle, dnd, invisible
   activity: "Watching your server"
   activity_type: "watching"  # playing, streaming, listening, watching
+  owner_id: ""  # YOUR DISCORD USER ID (REQUIRED for dashboard access)
   
 dashboard:
   enabled: true
@@ -14,8 +15,26 @@ dashboard:
   https: false
   cert_path: null
   key_path: null
-  secret_key: "CHANGE_THIS_SECRET_KEY_FOR_PRODUCTION"
+  
+  # Security Settings
+  secret_key: "CHANGE_THIS_SECRET_KEY_FOR_PRODUCTION"  # Generate with: python -c "import secrets; print(secrets.token_urlsafe(32))"
   session_timeout: 86400  # 24 hours in seconds
+  
+  # Discord OAuth2 (REQUIRED for login)
+  discord_client_id: ""  # Get from https://discord.com/developers/applications
+  discord_client_secret: ""  # Get from https://discord.com/developers/applications
+  discord_redirect_uri: "http://localhost:3000/auth/callback"  # Update for your domain
+  
+  # API Key (optional, for programmatic access)
+  api_key: ""  # Generate with: python -c "import secrets; print(secrets.token_urlsafe(32))"
+  
+  # IP Whitelist (optional, leave empty to allow all IPs)
+  ip_whitelist: []
+  # Example:
+  # ip_whitelist:
+  #   - "192.168.1.100"
+  #   - "10.0.0.5"
+  
   cors_origins:
     - "http://localhost:3000"
     - "http://localhost:3001"

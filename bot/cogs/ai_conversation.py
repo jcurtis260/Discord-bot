@@ -59,7 +59,7 @@ class AIConversation(commands.Cog):
         self.local_model = None
         self.local_tokenizer = None
         self.chatgpt_web = None
-        self._init_ai_providers()
+        self._init_combined_ai()
         
         self.personalities = {
             'friendly': {
