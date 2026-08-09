@@ -6,23 +6,25 @@ A comprehensive Discord bot combining MEE6-like features with advanced AI conver
 
 ### Core Features
 - ✅ **Moderation System** - Auto-mod, manual commands, infraction tracking
+- ✅ **Auto-Moderation** - Spam detection, bad word filter, mass mention protection, caps filter
 - ✅ **Leveling & XP** - Role rewards, leaderboards, rank cards
 - ✅ **AI Conversations** - Natural language, random engagement, personality system
 - ✅ **Economy** - Virtual currency, shop, inventory, transactions
 - ✅ **Giveaways** - Full giveaway management with entry requirements
-- ✅ **Games** - Trivia, gambling (slots, blackjack, roulette), fun games
-- ✅ **Welcome/Farewell** - Customizable messages and auto-roles
+- ✅ **Games** - Trivia, gambling (coinflip, slots), fun games (RPS, dice)
+- ✅ **Welcome & Goodbye** - Customizable join/leave messages with formatting
 - ✅ **Reaction Roles** - Easy role assignment via reactions
-- ✅ **Custom Commands** - Create server-specific commands
+- ✅ **Custom Commands** - Create server-specific commands with usage tracking
+- ✅ **Reminders** - Set personal reminders with natural language time parsing
 - ✅ **Web Dashboard** - Locally-hosted management interface
+- ✅ **Bot Customization** - Change avatar, name, status, nickname per-server
 
 ### Advanced Features
-- 🎮 **Red Cog Compatibility** - Load 1000+ Red-DiscordBot cogs
-- 🎵 **Music System** - Play from YouTube/Spotify (optional)
-- 🎫 **Tickets** - Support ticket management
-- ⭐ **Starboard** - Highlight popular messages
-- ⏰ **Reminders** - User reminder system
-- 🎂 **Birthdays** - Birthday tracking and announcements
+- ✅ **Red Cog Compatibility** - Load 1000+ Red-DiscordBot cogs with Config API support
+- 🔄 **Starboard** - Highlight popular messages (database ready)
+- 🔄 **Birthdays** - Birthday tracking and announcements (database ready)
+- 🔄 **Tickets** - Support ticket management (planned)
+- 🔄 **Music System** - Play from YouTube/Spotify (planned)
 
 ## Quick Start
 
@@ -134,14 +136,25 @@ See `config/bot_config.example.yaml` for all options.
 ### Moderation
 - `/warn <user> <reason>` - Warn a user
 - `/mute <user> <duration> <reason>` - Mute a user
+- `/unmute <user>` - Unmute a user
 - `/kick <user> <reason>` - Kick a user
 - `/ban <user> <duration> <reason>` - Ban a user
 - `/clear <amount>` - Delete messages
+- `/infractions <user>` - View user infractions
+
+### Auto-Moderation
+- `/automod-enable` - Enable auto-moderation
+- `/automod-disable` - Disable auto-moderation
+- `/automod-config` - View auto-mod settings
+- `/automod-action <action>` - Set auto-mod action
+- `/automod-badwords <action> <words>` - Manage bad words filter
 
 ### Leveling
 - `/rank [@user]` - View rank card
 - `/leaderboard` - Server leaderboard
 - `/setxp <user> <amount>` - Set user XP (admin)
+- `/addxp <user> <amount>` - Add XP to user (admin)
+- `/rolereward <level> <role>` - Set role reward (admin)
 
 ### Economy
 - `/balance [@user]` - Check balance
@@ -151,24 +164,44 @@ See `config/bot_config.example.yaml` for all options.
 - `/pay <user> <amount>` - Transfer money
 
 ### Giveaways
-- `/giveaway create` - Create giveaway
-- `/giveaway end <id>` - End giveaway
-- `/giveaway reroll <id>` - Reroll winner
+- `/giveaway-create <duration> <winners> <prize>` - Create giveaway
 
 ### Games
 - `/trivia [category]` - Start trivia game
+- `/coinflip <bet> <choice>` - Flip a coin
 - `/slots <bet>` - Play slots
-- `/blackjack <bet>` - Play blackjack
-- `/coinflip <bet>` - Flip a coin
-- `/rps [@user]` - Rock paper scissors
+- `/rps <choice>` - Rock paper scissors
+- `/roll [sides]` - Roll dice
 
-### AI
-- Mention the bot to chat
-- Reply to bot messages to continue conversation
-- `/ai enable` - Enable AI in channel (admin)
-- `/ai personality <type>` - Set personality (admin)
+### AI Conversation
+- Mention the bot or reply to its messages to chat
+- `/ai-config <action> [value]` - Configure AI settings
+- `/chat <message>` - Chat with the AI
 
-### Bot Customization
+### Welcome & Goodbye
+- `/welcome-set <channel> <message>` - Set welcome message
+- `/welcome-disable` - Disable welcome messages
+- `/goodbye-set <channel> <message>` - Set goodbye message
+- `/goodbye-disable` - Disable goodbye messages
+
+### Custom Commands
+- `/cc-add <name> <response>` - Add custom command
+- `/cc-edit <name> <response>` - Edit custom command
+- `/cc-delete <name>` - Delete custom command
+- `/cc-list` - List all custom commands
+- `/cc-info <name>` - Get info about custom command
+
+### Reaction Roles
+- `/reactionrole-add <message_id> <emoji> <role>` - Add reaction role
+- `/reactionrole-remove <message_id> <emoji>` - Remove reaction role
+- `/reactionrole-list` - List all reaction roles
+
+### Reminders
+- `/remind <time> <message>` - Set a reminder
+- `/reminders` - View your reminders
+- `/reminder-delete <id>` - Delete a reminder
+
+### Bot Settings
 - `/botavatar <url>` - Change bot's avatar (owner only)
 - `/botname <name>` - Change bot's username (owner only)
 - `/botnickname [nickname]` - Change bot's server nickname (admin)
@@ -176,6 +209,21 @@ See `config/bot_config.example.yaml` for all options.
 - `/prefix <new_prefix>` - Change command prefix (admin)
 - `/togglefeature <feature> <enabled>` - Enable/disable features (admin)
 - `/botconfig` - View current configuration
+
+### Red Cog Management
+- `/redcog-load <cog_name>` - Load Red cog (owner only)
+- `/redcog-unload <cog_name>` - Unload Red cog (owner only)
+- `/redcog-reload <cog_name>` - Reload Red cog (owner only)
+- `/redcog-list` - List all available Red cogs
+- `/redcog-info <cog_name>` - Get info about Red cog
+
+### Utility
+- `/help` - Show help
+- `/ping` - Check latency
+- `/serverinfo` - Server info
+- `/userinfo [@user]` - User info
+- `/botinfo` - Bot statistics
+- `/avatar [@user]` - View user's avatar
 
 ## Dashboard Features
 
