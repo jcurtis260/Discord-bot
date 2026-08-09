@@ -23,12 +23,22 @@
    - OAuth2 Secret: Discord Developer Portal → OAuth2 → Client Secret
 
 3. **Deploy in Portainer**
+   
+   **Option A: Deploy from Git (Easiest)**
    - Open Portainer UI (http://localhost:9000)
    - Stacks → + Add stack
    - Name: `discord-bot`
-   - Repository: `https://github.com/jcurtis260/Discord-bot`
-   - Branch: `main` (or your branch)
-   - Compose file: `portainer-stack.yml`
+   - Build method: **Web editor**
+   - Copy contents of `portainer-stack-with-repo.yml` and paste
+   
+   **Option B: Deploy from Repository**
+   - Open Portainer UI (http://localhost:9000)
+   - Stacks → + Add stack
+   - Name: `discord-bot`
+   - Build method: **Repository**
+   - Repository URL: `https://github.com/jcurtis260/Discord-bot`
+   - Branch: `cursor/discord-bot-plan-ea5f` (or `main` after merge)
+   - Compose file: `portainer-stack-with-repo.yml`
    
 4. **Set Environment Variables**
    Required:

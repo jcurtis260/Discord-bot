@@ -1,8 +1,8 @@
 version: '3.8'
 
-# Portainer Stack for Discord Bot
-# Deploy this stack through Portainer's web UI or CLI
-# All services are configured with health checks and proper networking
+# Portainer Stack for Discord Bot - Git Repository Deployment
+# This version pulls directly from GitHub and builds images
+# Use this when deploying via Portainer Stacks (not docker-compose locally)
 
 services:
   # PostgreSQL Database
@@ -15,8 +15,6 @@ services:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-changeme123}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      # Note: Schema files need to be added manually or via init container
-      # For automatic setup, clone repo and use local path deployment
     ports:
       - "5432:5432"
     healthcheck:
@@ -46,17 +44,42 @@ services:
     networks:
       - bot-network
 
+  # Database Initialization
+  # This service runs once to set up the database schema
+  db-init:
+    image: postgres:15-alpine
+    container_name: discord-bot-db-init
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${DATABASE_PASSWORD:-changeme123}
+    command: >
+      sh -c "
+        apk add --no-cache git &&
+        git clone --depth 1 --branch cursor/discord-bot-plan-ea5f https://github.com/jcurtis260/Discord-bot.git /repo &&
+        psql -h postgres -U bot_user -d discord_bot -f /repo/database/schema.sql &&
+        psql -h postgres -U bot_user -d discord_bot -f /repo/database/seeds/trivia_questions.sql &&
+        echo 'Database initialized successfully'
+      "
+    networks:
+      - bot-network
+    restart: "no"
+
   # Discord Bot
   bot:
     build:
       context: https://github.com/jcurtis260/Discord-bot.git#cursor/discord-bot-plan-ea5f
       dockerfile: Dockerfile
+    image: discord-bot:latest
     container_name: discord-bot
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     environment:
       # Bot Configuration
       DISCORD_TOKEN: ${DISCORD_TOKEN}
@@ -100,12 +123,15 @@ services:
     build:
       context: https://github.com/jcurtis260/Discord-bot.git#cursor/discord-bot-plan-ea5f:dashboard/backend
       dockerfile: Dockerfile
+    image: discord-bot-dashboard-backend:latest
     container_name: discord-bot-dashboard-backend
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
     environment:
       # Database URL
       DATABASE_URL: postgresql://bot_user:${DATABASE_PASSWORD:-changeme123}@postgres:5432/discord_bot
@@ -139,6 +165,9 @@ services:
     build:
       context: https://github.com/jcurtis260/Discord-bot.git#cursor/discord-bot-plan-ea5f:dashboard/frontend
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${DASHBOARD_API_URL:-http://localhost:8080}
+    image: discord-bot-dashboard-frontend:latest
     container_name: discord-bot-dashboard-frontend
     depends_on:
       - dashboard-backend
