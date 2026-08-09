@@ -5,10 +5,12 @@ A comprehensive Discord bot combining MEE6-like features with advanced AI conver
 ## Features
 
 ### Core Features
-- ✅ **Moderation System** - Auto-mod, manual commands, infraction tracking
-- ✅ **Auto-Moderation** - Spam detection, bad word filter, mass mention protection, caps filter
+- ✅ **Moderation System** - Manual moderation commands with infraction tracking
+- ✅ **Auto-Moderation** - Rule-based: spam, bad words, mass mentions, caps filter
+- ✅ **AI Moderation** - AI-powered content analysis for toxicity, NSFW, spam with user whitelist
 - ✅ **Leveling & XP** - Role rewards, leaderboards, rank cards
-- ✅ **AI Conversations** - Natural language, random engagement, personality system
+- ✅ **AI Conversations** - Natural language with OpenAI, Anthropic, or local models
+- ✅ **AI Model Support** - OpenAI (GPT-4), Anthropic (Claude), or local models (GPT-2, DialoGPT)
 - ✅ **Economy** - Virtual currency, shop, inventory, transactions
 - ✅ **Giveaways** - Full giveaway management with entry requirements
 - ✅ **Games** - Trivia, gambling (coinflip, slots), fun games (RPS, dice)
@@ -148,6 +150,16 @@ See `config/bot_config.example.yaml` for all options.
 - `/automod-config` - View auto-mod settings
 - `/automod-action <action>` - Set auto-mod action
 - `/automod-badwords <action> <words>` - Manage bad words filter
+
+### AI Moderation
+- `/aimod-enable` - Enable AI-powered moderation
+- `/aimod-disable` - Disable AI-powered moderation
+- `/aimod-config` - View AI mod settings
+- `/aimod-threshold <0-100>` - Set confidence threshold
+- `/aimod-action <action>` - Set AI mod action (warn/timeout/kick/log)
+- `/aimod-whitelist <action> <user>` - Manage AI mod whitelist
+- `/aimod-logchannel <channel>` - Set AI mod log channel
+- `/aimod-checks` - Toggle specific AI checks
 
 ### Leveling
 - `/rank [@user]` - View rank card
