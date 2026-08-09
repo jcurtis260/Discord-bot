@@ -37,6 +37,13 @@ except ImportError:
     LOCAL_MODEL_AVAILABLE = False
     logger.warning("Transformers not available for local models")
 
+try:
+    from modules.chatgpt_web import ChatGPTWebProvider
+    CHATGPT_WEB_AVAILABLE = True
+except ImportError:
+    CHATGPT_WEB_AVAILABLE = False
+    logger.warning("ChatGPT web provider not available")
+
 
 class AIConversation(commands.Cog):
     """AI-powered conversation system."""
@@ -51,6 +58,7 @@ class AIConversation(commands.Cog):
         self.anthropic_client = None
         self.local_model = None
         self.local_tokenizer = None
+        self.chatgpt_web = None
         self._init_ai_providers()
         
         self.personalities = {
@@ -72,14 +80,33 @@ class AIConversation(commands.Cog):
             }
         }
         
-        # Initialize AI client
+        # Initialize AI client (consolidated method)
         self.ai_client = None
         self.ai_provider = self.bot.config.get('ai.provider', 'openai')
-        self._init_ai_client()
+        self._init_combined_ai()
     
     def _init_ai_client(self):
         """Initialize AI client based on configuration."""
-        if self.ai_provider == 'openai' and OPENAI_AVAILABLE:
+        # Check for ChatGPT web first
+        if self.ai_provider == 'chatgpt_web' and CHATGPT_WEB_AVAILABLE:
+            web_config = {
+                'web_method': self.bot.config.get('ai.web_method', 'revchatgpt'),
+                'chatgpt_session_token': self.bot.config.get('ai.chatgpt_session_token'),
+                'chatgpt_access_token': self.bot.config.get('ai.chatgpt_access_token'),
+                'poe_token': self.bot.config.get('ai.poe_token'),
+                'poe_bot': self.bot.config.get('ai.poe_bot', 'GPT-4'),
+            }
+            try:
+                self.chatgpt_web = ChatGPTWebProvider(web_config)
+                if self.chatgpt_web.is_available():
+                    logger.info("✅ ChatGPT web provider initialized")
+                else:
+                    logger.warning("ChatGPT web provider not fully configured")
+            except Exception as e:
+                logger.error(f"Failed to initialize ChatGPT web: {e}")
+        
+        # Standard API providers
+        elif self.ai_provider == 'openai' and OPENAI_AVAILABLE:
             api_key = self.bot.config.get('ai.api_key')
             if api_key:
                 self.ai_client = openai.AsyncOpenAI(api_key=api_key)
@@ -162,10 +189,23 @@ class AIConversation(commands.Cog):
     
     async def generate_ai_response(self, messages: List[Dict], personality: str = 'friendly') -> str:
         """Generate AI response using configured provider."""
-        if not self.ai_client:
-            return "❌ AI is not configured. Please set up an API key."
-        
         personality_config = self.personalities.get(personality, self.personalities['friendly'])
+        
+        # ChatGPT Web Provider
+        if self.ai_provider == 'chatgpt_web' and self.chatgpt_web:
+            try:
+                return await self.chatgpt_web.generate_response(messages, personality)
+            except Exception as e:
+                logger.error(f"ChatGPT web error: {e}")
+                return f"❌ ChatGPT web error: {str(e)}"
+        
+        # Local Model Provider
+        elif self.ai_provider == 'local' and self.local_model:
+            return await self._generate_local_response(messages, personality)
+        
+        # Standard API providers (OpenAI, Anthropic)
+        elif not self.ai_client:
+            return "❌ AI is not configured. Please set up an API key or configure web authentication."
         
         # Add system prompt
         full_messages = [
@@ -199,6 +239,56 @@ class AIConversation(commands.Cog):
         except Exception as e:
             logger.error(f"AI generation error: {e}")
             return "❌ Sorry, I encountered an error generating a response."
+    
+    async def _generate_local_response(self, messages: List[Dict], personality: str = 'friendly') -> str:
+        """Generate response using local model."""
+        if not self.local_model or not self.local_tokenizer:
+            return "Local AI model not available. Please configure an API key."
+        
+        try:
+            # Format conversation for local model
+            personality_config = self.personalities.get(personality, self.personalities['friendly'])
+            prompt = f"{personality_config['system_prompt']}\n\n"
+            
+            for msg in messages[-5:]:  # Use last 5 messages
+                role = msg['role']
+                content = msg['content']
+                if role == 'user':
+                    prompt += f"User: {content}\n"
+                elif role == 'assistant':
+                    prompt += f"Assistant: {content}\n"
+            
+            prompt += "Assistant:"
+            
+            # Generate response
+            inputs = self.local_tokenizer(prompt, return_tensors="pt")
+            if torch.cuda.is_available():
+                inputs = inputs.to("cuda")
+            
+            with torch.no_grad():
+                outputs = self.local_model.generate(
+                    **inputs,
+                    max_new_tokens=150,
+                    temperature=personality_config['temperature'],
+                    do_sample=True,
+                    top_p=0.9,
+                    pad_token_id=self.local_tokenizer.eos_token_id
+                )
+            
+            response = self.local_tokenizer.decode(outputs[0], skip_special_tokens=True)
+            
+            # Extract just the assistant's response
+            response = response.split("Assistant:")[-1].strip()
+            
+            # Limit length
+            if len(response) > 500:
+                response = response[:500] + "..."
+            
+            return response
+        
+        except Exception as e:
+            logger.error(f"Local model generation error: {e}")
+            return "I'm having trouble generating a response right now."
     
     def should_respond_randomly(self, engagement_rate: float) -> bool:
         """Determine if bot should randomly join conversation."""

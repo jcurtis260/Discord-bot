@@ -16,3 +16,5 @@ parsedatetime==2.6
 transformers>=4.30.0
 torch>=2.0.0
 sentencepiece>=0.1.99
+revChatGPT>=6.0.0
+poe-api>=0.4.7
