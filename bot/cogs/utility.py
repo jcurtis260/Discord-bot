@@ -55,6 +55,13 @@ class Utility(commands.Cog):
         )
         
         embed.add_field(
+            name="⚙️ Bot Settings",
+            value="`/botconfig` `/prefix` `/togglefeature` `/botnickname`\n"
+                  "`/botavatar` `/botname` `/botstatus` (owner only)",
+            inline=False
+        )
+        
+        embed.add_field(
             name="ℹ️ Info",
             value="`/help` `/serverinfo` `/userinfo` `/botinfo` `/ping`",
             inline=False

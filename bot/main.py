@@ -67,6 +67,11 @@ class DiscordBot(commands.Bot):
         """Set up the bot before it starts."""
         logger.info("Setting up bot...")
         
+        # Get bot owner ID
+        app_info = await self.application_info()
+        self.owner_id = app_info.owner.id
+        logger.info(f"Bot owner: {app_info.owner} (ID: {self.owner_id})")
+        
         # Connect to database
         try:
             self.db = Database(config.database_url)

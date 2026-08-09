@@ -416,6 +416,25 @@ CREATE TABLE IF NOT EXISTS starboard_messages (
 CREATE INDEX idx_starboard_count ON starboard_messages(star_count DESC);
 
 -- ============================================================================
+-- BOT SETTINGS TABLES
+-- ============================================================================
+
+-- Global Bot Settings (persisted across restarts)
+CREATE TABLE IF NOT EXISTS bot_settings (
+    setting_key VARCHAR(100) PRIMARY KEY,
+    setting_value TEXT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Initial bot settings
+INSERT INTO bot_settings (setting_key, setting_value)
+VALUES 
+    ('status_activity_type', 'watching'),
+    ('status_activity_text', 'your server'),
+    ('status', 'online')
+ON CONFLICT (setting_key) DO NOTHING;
+
+-- ============================================================================
 -- DASHBOARD TABLES
 -- ============================================================================
 

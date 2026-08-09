@@ -168,6 +168,15 @@ See `config/bot_config.example.yaml` for all options.
 - `/ai enable` - Enable AI in channel (admin)
 - `/ai personality <type>` - Set personality (admin)
 
+### Bot Customization
+- `/botavatar <url>` - Change bot's avatar (owner only)
+- `/botname <name>` - Change bot's username (owner only)
+- `/botnickname [nickname]` - Change bot's server nickname (admin)
+- `/botstatus <type> <text> [status]` - Change bot status (owner only)
+- `/prefix <new_prefix>` - Change command prefix (admin)
+- `/togglefeature <feature> <enabled>` - Enable/disable features (admin)
+- `/botconfig` - View current configuration
+
 ## Dashboard Features
 
 - 📊 **Real-time Dashboard** - Bot status, stats, activity graphs
