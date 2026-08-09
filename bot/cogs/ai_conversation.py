@@ -29,6 +29,14 @@ except ImportError:
     ANTHROPIC_AVAILABLE = False
     logger.warning("Anthropic not available")
 
+try:
+    from transformers import AutoModelForCausalLM, AutoTokenizer
+    import torch
+    LOCAL_MODEL_AVAILABLE = True
+except ImportError:
+    LOCAL_MODEL_AVAILABLE = False
+    logger.warning("Transformers not available for local models")
+
 
 class AIConversation(commands.Cog):
     """AI-powered conversation system."""
@@ -37,6 +45,14 @@ class AIConversation(commands.Cog):
         """Initialize AI conversation cog."""
         self.bot = bot
         self.context_cache = {}  # In-memory cache for conversation context
+        
+        # Initialize AI providers
+        self.openai_client = None
+        self.anthropic_client = None
+        self.local_model = None
+        self.local_tokenizer = None
+        self._init_ai_providers()
+        
         self.personalities = {
             'friendly': {
                 'system_prompt': "You are a friendly and helpful Discord bot assistant. Be conversational, use appropriate emojis occasionally, and help users with their questions. Keep responses concise (under 300 characters when possible).",

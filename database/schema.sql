@@ -40,6 +40,27 @@ CREATE TABLE IF NOT EXISTS guild_config (
     ai_personality VARCHAR(50) DEFAULT 'friendly',
     ai_engagement_rate FLOAT DEFAULT 0.1,
     
+    -- AI Moderation Settings
+    ai_mod_enabled BOOLEAN DEFAULT FALSE,
+    ai_mod_threshold FLOAT DEFAULT 0.7,
+    ai_mod_action VARCHAR(20) DEFAULT 'warn',
+    ai_mod_log_channel BIGINT,
+    ai_mod_check_toxicity BOOLEAN DEFAULT TRUE,
+    ai_mod_check_spam BOOLEAN DEFAULT TRUE,
+    ai_mod_check_nsfw BOOLEAN DEFAULT TRUE,
+    
+    -- Auto-Moderation Settings
+    automod_enabled BOOLEAN DEFAULT FALSE,
+    automod_spam_threshold INT DEFAULT 5,
+    automod_mention_threshold INT DEFAULT 5,
+    automod_bad_words TEXT[],
+    automod_caps_threshold FLOAT DEFAULT 0.7,
+    automod_action VARCHAR(20) DEFAULT 'warn',
+    
+    -- Welcome/Goodbye Settings
+    goodbye_channel BIGINT,
+    goodbye_message TEXT,
+    
     -- Economy Settings
     currency_name VARCHAR(50) DEFAULT 'Credits',
     currency_emoji VARCHAR(20) DEFAULT '💰',
@@ -169,6 +190,15 @@ CREATE TABLE IF NOT EXISTS ai_channels (
     personality VARCHAR(50),
     
     PRIMARY KEY (guild_id, channel_id)
+);
+
+-- AI Moderation Whitelist
+CREATE TABLE IF NOT EXISTS ai_mod_whitelist (
+    guild_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    added_at TIMESTAMP DEFAULT NOW(),
+    PRIMARY KEY (guild_id, user_id),
+    FOREIGN KEY (guild_id) REFERENCES guild_config(guild_id) ON DELETE CASCADE
 );
 
 -- ============================================================================
