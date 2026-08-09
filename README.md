@@ -418,9 +418,10 @@ DASHBOARD_PORT=3000
 For detailed information, see these guides:
 
 ### Essential Setup Guides
-- **[PORTAINER_DEPLOYMENT.md](PORTAINER_DEPLOYMENT.md)** - **NEW!** Deploy and manage your bot with Portainer's web UI (easiest method!)
-- **[CUSTOM_PORTS.md](CUSTOM_PORTS.md)** - **NEW!** Configure custom ports for the dashboard (use any port you want!)
-- **[DASHBOARD_SECURITY.md](DASHBOARD_SECURITY.md)** - Complete guide to securing the web dashboard with Discord OAuth2, API keys, and IP whitelisting
+- **[PORTAINER_DEPLOYMENT.md](PORTAINER_DEPLOYMENT.md)** - Deploy and manage your bot with Portainer's web UI (easiest method!)
+- **[CUSTOM_PORTS.md](CUSTOM_PORTS.md)** - Configure custom ports for the dashboard (use any port you want!)
+- **[WEB_UI_SETTINGS.md](WEB_UI_SETTINGS.md)** - **NEW!** Manage all bot settings through the web dashboard (no file editing!)
+- **[DASHBOARD_SECURITY.md](DASHBOARD_SECURITY.md)** - Complete guide to securing the web dashboard
 - **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - Step-by-step installation and configuration guide
 
 ### Configuration Guides

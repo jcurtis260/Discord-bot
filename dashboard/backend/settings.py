@@ -114,7 +114,7 @@ class DashboardSettings(BaseModel):
 # ============================================================================
 
 @router.get("/bot/global")
-async def get_bot_global_settings(user: Dict = Depends(owner_user)):
+async def get_bot_global_settings():
     """Get global bot settings."""
     config_path = Path(__file__).parent / '../../config/bot_config.yaml'
     
@@ -133,10 +133,7 @@ async def get_bot_global_settings(user: Dict = Depends(owner_user)):
 
 
 @router.put("/bot/global")
-async def update_bot_global_settings(
-    settings: BotGlobalSettings,
-    user: Dict = Depends(owner_user)
-):
+async def update_bot_global_settings(settings: BotGlobalSettings):
     """Update global bot settings."""
     config_path = Path(__file__).parent / '../../config/bot_config.yaml'
     
@@ -163,7 +160,7 @@ async def update_bot_global_settings(
 
 
 @router.get("/ai")
-async def get_ai_settings(user: Dict = Depends(owner_user)):
+async def get_ai_settings():
     """Get AI configuration."""
     config_path = Path(__file__).parent / '../../config/bot_config.yaml'
     
@@ -187,10 +184,7 @@ async def get_ai_settings(user: Dict = Depends(owner_user)):
 
 
 @router.put("/ai")
-async def update_ai_settings(
-    settings: AISettings,
-    user: Dict = Depends(owner_user)
-):
+async def update_ai_settings(settings: AISettings):
     """Update AI configuration."""
     config_path = Path(__file__).parent / '../../config/bot_config.yaml'
     
@@ -228,7 +222,7 @@ async def update_ai_settings(
 
 
 @router.get("/moderation")
-async def get_moderation_settings(user: Dict = Depends(owner_user)):
+async def get_moderation_settings():
     """Get moderation configuration."""
     config_path = Path(__file__).parent / '../../config/bot_config.yaml'
     
@@ -249,10 +243,7 @@ async def get_moderation_settings(user: Dict = Depends(owner_user)):
 
 
 @router.put("/moderation")
-async def update_moderation_settings(
-    settings: ModerationSettings,
-    user: Dict = Depends(owner_user)
-):
+async def update_moderation_settings(settings: ModerationSettings):
     """Update moderation configuration."""
     config_path = Path(__file__).parent / '../../config/bot_config.yaml'
     
@@ -279,7 +270,7 @@ async def update_moderation_settings(
 
 
 @router.get("/leveling")
-async def get_leveling_settings(user: Dict = Depends(owner_user)):
+async def get_leveling_settings():
     """Get leveling system configuration."""
     config_path = Path(__file__).parent / '../../config/bot_config.yaml'
     
@@ -300,10 +291,7 @@ async def get_leveling_settings(user: Dict = Depends(owner_user)):
 
 
 @router.put("/leveling")
-async def update_leveling_settings(
-    settings: LevelingSettings,
-    user: Dict = Depends(owner_user)
-):
+async def update_leveling_settings(settings: LevelingSettings):
     """Update leveling system configuration."""
     config_path = Path(__file__).parent / '../../config/bot_config.yaml'
     
@@ -329,7 +317,7 @@ async def update_leveling_settings(
 
 
 @router.get("/economy")
-async def get_economy_settings(user: Dict = Depends(owner_user)):
+async def get_economy_settings():
     """Get economy system configuration."""
     config_path = Path(__file__).parent / '../../config/bot_config.yaml'
     
@@ -353,10 +341,7 @@ async def get_economy_settings(user: Dict = Depends(owner_user)):
 
 
 @router.put("/economy")
-async def update_economy_settings(
-    settings: EconomySettings,
-    user: Dict = Depends(owner_user)
-):
+async def update_economy_settings(settings: EconomySettings):
     """Update economy system configuration."""
     config_path = Path(__file__).parent / '../../config/bot_config.yaml'
     
@@ -386,7 +371,7 @@ async def update_economy_settings(
 
 
 @router.get("/features")
-async def get_feature_toggles(user: Dict = Depends(owner_user)):
+async def get_feature_toggles():
     """Get feature toggle configuration."""
     config_path = Path(__file__).parent / '../../config/bot_config.yaml'
     
@@ -409,10 +394,7 @@ async def get_feature_toggles(user: Dict = Depends(owner_user)):
 
 
 @router.put("/features")
-async def update_feature_toggles(
-    settings: GuildFeatureToggles,
-    user: Dict = Depends(owner_user)
-):
+async def update_feature_toggles(settings: GuildFeatureToggles):
     """Update feature toggles."""
     config_path = Path(__file__).parent / '../../config/bot_config.yaml'
     
@@ -447,12 +429,11 @@ async def update_feature_toggles(
 
 
 @router.get("/guild/{guild_id}")
-async def get_guild_settings(
-    guild_id: int,
-    user: Dict = Depends(current_user),
-    db: Database = Depends(get_db)
-):
+async def get_guild_settings(guild_id: int):
     """Get settings for a specific guild."""
+    # Import db from server module
+    from server import db
+    
     settings = await db.fetchrow(
         "SELECT * FROM guild_config WHERE guild_id = $1",
         guild_id
@@ -465,13 +446,11 @@ async def get_guild_settings(
 
 
 @router.put("/guild/{guild_id}")
-async def update_guild_settings(
-    guild_id: int,
-    settings: GuildSettings,
-    user: Dict = Depends(owner_user),
-    db: Database = Depends(get_db)
-):
+async def update_guild_settings(guild_id: int, settings: GuildSettings):
     """Update settings for a specific guild."""
+    # Import db from server module
+    from server import db
+    
     await db.ensure_guild(guild_id)
     
     # Build update query dynamically
@@ -510,11 +489,3 @@ async def update_guild_settings(
         await db.execute(query, *values)
     
     return {"success": True, "message": "Guild settings updated successfully"}
-
-
-# Dependency to get database
-async def get_db():
-    """Get database instance."""
-    if not db:
-        raise HTTPException(status_code=500, detail="Database not initialized")
-    return db
