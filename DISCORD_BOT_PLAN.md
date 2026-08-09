@@ -206,6 +206,863 @@ A comprehensive Discord bot that combines traditional community management featu
 
 ---
 
+## Web Dashboard (Local Management Interface)
+
+### 1. Dashboard Overview
+A comprehensive, locally-hosted web interface for complete bot management, configuration, and monitoring. Accessible via browser at `http://localhost:3000` (configurable port).
+
+### 2. Technology Stack
+- **Frontend Framework**
+  - React.js with TypeScript or Vue.js 3
+  - Tailwind CSS for styling
+  - Chart.js or Recharts for analytics
+  - Shadcn/ui or Ant Design for UI components
+  
+- **Backend API**
+  - Express.js (Node.js) or FastAPI (Python)
+  - RESTful API + WebSocket for real-time updates
+  - JWT authentication for secure access
+  - CORS configuration for local access
+  
+- **Real-Time Features**
+  - WebSocket connections for live stats
+  - Server-Sent Events (SSE) for notifications
+  - Live log streaming
+  - Real-time Discord event monitoring
+
+### 3. Dashboard Features & Pages
+
+#### A. Authentication & Security
+```
+Login Page
+├── Username/Password authentication
+├── 2FA support (optional)
+├── Session management
+├── Remember me functionality
+└── Secure token storage
+```
+
+**Default Setup:**
+- First-time setup creates admin account
+- Password requirements (min 12 characters)
+- Brute-force protection
+- Session timeout after inactivity
+- API key management for remote access (optional)
+
+#### B. Home Dashboard (Overview)
+```
+Dashboard Home
+├── Bot Status Card
+│   ├── Online/Offline status
+│   ├── Uptime counter
+│   ├── Current latency (ms)
+│   ├── Memory usage
+│   └── Quick restart button
+│
+├── Server Statistics
+│   ├── Total servers
+│   ├── Total users
+│   ├── Active users (24h)
+│   └── Commands executed today
+│
+├── Activity Graph
+│   ├── Messages per hour (last 24h)
+│   ├── Commands per hour
+│   └── AI responses per hour
+│
+├── Recent Alerts
+│   ├── Auto-mod triggers
+│   ├── Error notifications
+│   ├── High usage warnings
+│   └── System notifications
+│
+└── Quick Actions
+    ├── View all servers
+    ├── Check infractions
+    ├── Review AI conversations
+    └── Access logs
+```
+
+#### C. Initial Setup Wizard
+**Step-by-step guided setup for new installations:**
+
+```
+Setup Wizard Flow:
+
+Step 1: Bot Credentials
+├── Discord Bot Token input
+├── Application ID
+├── Test connection button
+└── Bot invite link generator
+
+Step 2: Database Configuration
+├── PostgreSQL connection string
+├── Database creation option
+├── Test database connection
+└── Run initial migrations
+
+Step 3: Redis Configuration
+├── Redis host/port
+├── Connection testing
+└── Cache configuration
+
+Step 4: AI Integration (Optional)
+├── Choose AI provider (OpenAI/Anthropic/Local/None)
+├── API key input
+├── Model selection
+├── Test AI connection
+└── Set default personality
+
+Step 5: Server Selection
+├── Display all Discord servers bot has joined
+├── Select servers to activate bot on
+├── Per-server initial configuration
+└── Set admin roles per server
+
+Step 6: Basic Settings
+├── Default command prefix
+├── Enable/disable features globally
+├── Set timezone
+└── Configure logging level
+
+Step 7: Review & Launch
+├── Review all settings
+├── Save configuration
+├── Start bot service
+└── Complete setup
+```
+
+#### D. Server Management Page
+```
+Server List View
+├── Search/filter servers
+├── Sort by member count, activity, join date
+├── Server cards showing:
+│   ├── Server icon and name
+│   ├── Member count
+│   ├── Bot status (active/inactive)
+│   ├── Command usage count
+│   └── Quick action buttons
+│
+└── Click server → Server Detail Page
+
+Server Detail Page
+├── Server Information
+│   ├── Icon, name, member count
+│   ├── Owner information
+│   ├── Creation date
+│   └── Bot join date
+│
+├── Configuration Tabs
+│   ├── General Settings
+│   ├── Moderation
+│   ├── Leveling System
+│   ├── Welcome/Farewell
+│   ├── AI Settings
+│   ├── Custom Commands
+│   ├── Reaction Roles
+│   └── Permissions
+│
+└── Server Statistics
+    ├── Activity charts
+    ├── Most active users
+    ├── Command usage breakdown
+    └── AI conversation stats
+```
+
+#### E. Moderation Management
+```
+Moderation Dashboard
+├── Auto-Moderation Settings
+│   ├── Spam filter (enable/disable, threshold)
+│   ├── Profanity filter (wordlist management)
+│   ├── Link filter (whitelist/blacklist editor)
+│   ├── Mention spam (threshold settings)
+│   ├── Caps lock detection
+│   └── Duplicate message detection
+│
+├── Moderation Roles
+│   ├── Assign moderator roles (dropdown selector)
+│   ├── Assign admin roles
+│   ├── Assign trusted roles
+│   └── Role hierarchy display
+│
+├── Active Infractions Table
+│   ├── Searchable/filterable table
+│   ├── Columns: User, Type, Reason, Moderator, Date, Duration
+│   ├── Actions: View details, Edit, Remove
+│   └── Export infractions (CSV/JSON)
+│
+├── Infraction Statistics
+│   ├── Warnings issued (chart over time)
+│   ├── Mutes, kicks, bans breakdown
+│   ├── Most active moderators
+│   └── Most common reasons
+│
+└── Bulk Actions
+    ├── Clear expired infractions
+    ├── Bulk unban
+    └── Export audit log
+```
+
+#### F. Leveling System Configuration
+```
+Leveling Dashboard
+├── Global Settings
+│   ├── Enable/Disable XP system (toggle)
+│   ├── XP per message (slider: 5-50)
+│   ├── XP cooldown (slider: 30-300 seconds)
+│   ├── Voice XP per minute (slider: 1-20)
+│   ├── XP multiplier for boosters (slider: 1-3x)
+│   └── Level-up announcement settings
+│
+├── Channel Settings
+│   ├── List of all channels
+│   ├── Enable/disable XP per channel
+│   ├── Custom XP multipliers per channel
+│   └── No-XP channel list
+│
+├── Role Rewards Manager
+│   ├── Add role reward button
+│   ├── Table: Level | Role | Actions
+│   ├── Drag to reorder
+│   ├── Quick edit/delete
+│   └── Visual level progression timeline
+│
+├── Leaderboard View
+│   ├── Top 100 users table
+│   ├── Filter by timeframe (all-time, monthly, weekly)
+│   ├── Search for specific user
+│   ├── View user details
+│   └── Manual XP adjustment interface
+│
+└── Rank Card Customizer
+    ├── Background image upload
+    ├── Color scheme selector
+    ├── Font selection
+    ├── Layout options
+    └── Preview panel
+```
+
+#### G. AI Configuration Center
+```
+AI Settings Dashboard
+├── Provider Configuration
+│   ├── Select provider (OpenAI/Anthropic/Local)
+│   ├── API key input (masked)
+│   ├── Model selection dropdown
+│   ├── Test connection button
+│   └── Usage statistics (requests, tokens, cost estimate)
+│
+├── Personality Settings
+│   ├── Personality preset selector
+│   │   ├── Friendly
+│   │   ├── Professional
+│   │   ├── Humorous
+│   │   ├── Casual
+│   │   └── Custom
+│   ├── Custom personality editor (text area)
+│   ├── Tone adjustment sliders
+│   └── Example conversation preview
+│
+├── Engagement Rules
+│   ├── Per-Server Toggle
+│   ├── Per-Channel Configuration
+│   │   ├── Channel list with enable/disable
+│   │   ├── Engagement rate slider (Low/Med/High)
+│   │   └── Random participation probability (0-100%)
+│   │
+│   ├── Trigger Keywords Manager
+│   │   ├── Add/remove keywords
+│   │   ├── Phrase matching options
+│   │   └── Case sensitivity toggle
+│   │
+│   └── Conversation Settings
+│       ├── Max conversation length (messages)
+│       ├── Context window size
+│       ├── Response timeout (seconds)
+│       └── Rate limiting (responses per hour)
+│
+├── Content Safety
+│   ├── Content filter level (Off/Low/Med/High)
+│   ├── Blocked topics list
+│   ├── Response length limits
+│   └── Emergency disable button
+│
+└── AI Analytics
+    ├── Conversations today/week/month
+    ├── Average response time
+    ├── User satisfaction (reactions)
+    ├── Most discussed topics
+    ├── API cost breakdown
+    └── Token usage graphs
+```
+
+#### H. Custom Commands Manager
+```
+Custom Commands Dashboard
+├── Command List
+│   ├── Search/filter commands
+│   ├── Table: Name | Type | Usage Count | Actions
+│   ├── Quick enable/disable toggle
+│   └── Bulk delete option
+│
+├── Add/Edit Command Interface
+│   ├── Command name input
+│   ├── Description input
+│   ├── Response type selector
+│   │   ├── Plain text
+│   │   ├── Embed (with builder)
+│   │   ├── Image URL
+│   │   └── Random responses
+│   │
+│   ├── Response Content Editor
+│   │   ├── Text editor with variable support
+│   │   ├── Variables: {user}, {server}, {channel}, {date}
+│   │   ├── Live preview panel
+│   │   └── Embed builder (if selected)
+│   │
+│   ├── Permission Settings
+│   │   ├── Required role dropdown
+│   │   ├── Allowed channels (multi-select)
+│   │   └── Cooldown setting
+│   │
+│   └── Save/Cancel buttons
+│
+└── Command Analytics
+    ├── Most used commands
+    ├── Commands by channel
+    └── Usage over time chart
+```
+
+#### I. Welcome & Farewell Editor
+```
+Welcome System
+├── Welcome Message Settings
+│   ├── Enable/disable toggle
+│   ├── Channel selector dropdown
+│   ├── Message type (Plain/Embed/Both)
+│   │
+│   ├── Message Editor
+│   │   ├── Text editor with variables
+│   │   ├── Variables: {user}, {mention}, {server}, {membercount}
+│   │   ├── Embed builder interface
+│   │   │   ├── Title, description, color
+│   │   │   ├── Thumbnail/image upload
+│   │   │   ├── Fields editor
+│   │   │   └── Footer text
+│   │   └── Live preview panel
+│   │
+│   ├── Welcome Image Generator (optional)
+│   │   ├── Template selector
+│   │   ├── Background image upload
+│   │   ├── Text customization
+│   │   └── Preview
+│   │
+│   └── Auto-Role Assignment
+│       ├── Enable toggle
+│       ├── Select roles (multi-select)
+│       └── Role hierarchy check
+│
+├── Welcome DM Settings
+│   ├── Enable DM to new members
+│   ├── DM content editor
+│   ├── Include server rules toggle
+│   └── Preview button
+│
+└── Farewell Settings
+    ├── Enable/disable toggle
+    ├── Channel selector
+    ├── Message editor (same as welcome)
+    └── Farewell image settings
+```
+
+#### J. Reaction Roles Builder
+```
+Reaction Roles Dashboard
+├── Active Reaction Role Messages
+│   ├── List of configured messages
+│   ├── Message preview
+│   ├── Edit/Delete buttons
+│   └── Message link (jump to Discord)
+│
+├── Create New Reaction Role Setup
+│   ├── Step 1: Message Content
+│   │   ├── Title input
+│   │   ├── Description editor
+│   │   ├── Embed builder
+│   │   └── Preview panel
+│   │
+│   ├── Step 2: Reaction Configuration
+│   │   ├── Add reaction-role pair button
+│   │   ├── Emoji picker (server emojis + default)
+│   │   ├── Role selector dropdown
+│   │   ├── Visual list of pairs
+│   │   └── Drag to reorder
+│   │
+│   ├── Step 3: Behavior Settings
+│   │   ├── Role mode (Toggle/Select one/Select multiple)
+│   │   ├── Min/max roles per user
+│   │   ├── Require existing role (verification)
+│   │   └── Remove reaction after adding role
+│   │
+│   ├── Step 4: Target Selection
+│   │   ├── Channel selector
+│   │   ├── Post as new message button
+│   │   └── Or: Use existing message ID input
+│   │
+│   └── Create button
+│
+└── Statistics
+    ├── Most claimed roles
+    ├── Reaction role usage
+    └── Recent role assignments
+```
+
+#### K. Analytics & Reports
+```
+Analytics Dashboard
+├── Overview Stats
+│   ├── Total messages tracked
+│   ├── Commands executed
+│   ├── Active users
+│   └── Server growth
+│
+├── Activity Charts
+│   ├── Messages per day (30 days)
+│   ├── Commands per day
+│   ├── User joins/leaves
+│   ├── Voice activity
+│   └── AI engagement rate
+│
+├── Server Insights
+│   ├── Most active channels (bar chart)
+│   ├── Peak activity hours (heat map)
+│   ├── Member growth trend
+│   └── Retention rate
+│
+├── User Analytics
+│   ├── Top contributors (XP leaderboard)
+│   ├── Most active chatters
+│   ├── Most active voice users
+│   └── User search tool
+│
+├── Command Statistics
+│   ├── Command usage breakdown (pie chart)
+│   ├── Commands per user
+│   ├── Failed commands
+│   └── Average response time
+│
+├── AI Performance
+│   ├── Conversations initiated
+│   ├── Average response quality (reactions)
+│   ├── Topics discussed
+│   ├── API costs (daily/weekly/monthly)
+│   └── Token usage trends
+│
+└── Export Options
+    ├── Export to CSV
+    ├── Export to JSON
+    ├── Generate PDF report
+    └── Schedule automated reports
+```
+
+#### L. Logs & Monitoring
+```
+Logs Viewer
+├── Live Log Stream
+│   ├── Real-time log display (auto-scroll)
+│   ├── Color-coded by severity
+│   ├── Pause/resume stream
+│   └── Search/filter logs
+│
+├── Log Filters
+│   ├── Log level (DEBUG/INFO/WARN/ERROR)
+│   ├── Date range picker
+│   ├── Server filter
+│   ├── Event type filter
+│   └── User/channel filter
+│
+├── Event Categories
+│   ├── Bot Events (start, stop, errors)
+│   ├── Discord Events (joins, leaves, messages)
+│   ├── Moderation Events (warns, bans, kicks)
+│   ├── Command Execution
+│   ├── AI Interactions
+│   └── Database Operations
+│
+├── Log Entry Details
+│   ├── Timestamp
+│   ├── Severity level
+│   ├── Event type
+│   ├── Server/Channel context
+│   ├── User information
+│   ├── Full message/stack trace
+│   └── Related events timeline
+│
+└── Log Management
+    ├── Download logs (date range)
+    ├── Clear old logs
+    ├── Configure retention period
+    └── Log level configuration
+```
+
+#### M. System Settings
+```
+Global Configuration
+├── Bot Settings
+│   ├── Bot token (masked, regenerate)
+│   ├── Application ID
+│   ├── Default status
+│   ├── Activity message
+│   └── Presence type (Playing/Watching/Listening)
+│
+├── Database Settings
+│   ├── Connection string (masked)
+│   ├── Connection pool size
+│   ├── Backup schedule
+│   ├── Manual backup button
+│   └── Restore from backup
+│
+├── Redis Settings
+│   ├── Host/port configuration
+│   ├── Database number
+│   ├── Cache TTL settings
+│   └── Flush cache button
+│
+├── API Configuration
+│   ├── Dashboard port number
+│   ├── Enable HTTPS (cert upload)
+│   ├── CORS settings
+│   ├── Rate limiting
+│   └── API keys management
+│
+├── Notification Settings
+│   ├── Email notifications (errors, reports)
+│   ├── Discord webhook alerts
+│   ├── Alert thresholds
+│   └── Notification preferences
+│
+├── Backup & Restore
+│   ├── Automated backup schedule
+│   ├── Backup location
+│   ├── Manual backup now
+│   ├── Restore from backup
+│   └── Export all data
+│
+└── Advanced Settings
+    ├── Debug mode toggle
+    ├── Enable beta features
+    ├── Reset to defaults
+    └── Danger zone (delete all data)
+```
+
+#### N. User Management (Dashboard Users)
+```
+Dashboard Users
+├── User List
+│   ├── Username, Role, Last Login
+│   ├── Add new user button
+│   └── Actions (Edit/Delete)
+│
+├── Add/Edit User
+│   ├── Username input
+│   ├── Email input
+│   ├── Password (set/reset)
+│   ├── Role (Admin/Moderator/Viewer)
+│   └── Permissions checklist
+│
+└── Session Management
+    ├── Active sessions list
+    ├── Force logout button
+    └── Session timeout settings
+```
+
+#### O. Permissions & Roles (Bot Permissions)
+```
+Permissions Manager
+├── Per-Server Configuration
+│   ├── Server selector
+│   └── Role assignment interface
+│
+├── Command Categories
+│   ├── Moderation Commands
+│   ├── Configuration Commands
+│   ├── XP Management
+│   ├── AI Settings
+│   ├── Custom Commands
+│   └── Public Commands
+│
+├── Role Assignment Matrix
+│   ├── Table: Category | Required Roles
+│   ├── Multi-select role dropdowns
+│   ├── Visual hierarchy display
+│   └── Save changes button
+│
+├── Permission Testing
+│   ├── User selector
+│   ├── Command input
+│   ├── Test button
+│   └── Result display (allowed/denied)
+│
+└── Permission Templates
+    ├── Default templates (strict/moderate/lenient)
+    ├── Save current as template
+    └── Apply template to server
+```
+
+### 4. Real-Time Features
+
+#### WebSocket Events
+```javascript
+// Live updates pushed to dashboard
+{
+  "events": [
+    "bot_status_change",      // Online/offline
+    "new_message",            // Discord message
+    "command_executed",       // Command usage
+    "moderation_action",      // Ban, kick, warn, etc.
+    "level_up",              // User leveled up
+    "member_join",           // New member
+    "member_leave",          // Member left
+    "ai_response",           // AI sent message
+    "error_occurred",        // Error/warning
+    "config_changed"         // Settings updated
+  ]
+}
+```
+
+#### Live Notifications
+- Toast notifications for important events
+- Sound alerts (optional, configurable)
+- Desktop notifications (if enabled)
+- Notification center with history
+
+### 5. Mobile Responsiveness
+- Fully responsive design
+- Mobile-friendly navigation (hamburger menu)
+- Touch-optimized controls
+- Simplified mobile views for complex pages
+- Progressive Web App (PWA) support for installation
+
+### 6. Dashboard API Endpoints
+
+```javascript
+// Authentication
+POST   /api/auth/login
+POST   /api/auth/logout
+POST   /api/auth/refresh
+GET    /api/auth/me
+
+// Bot Management
+GET    /api/bot/status
+POST   /api/bot/restart
+POST   /api/bot/stop
+GET    /api/bot/stats
+
+// Servers
+GET    /api/servers
+GET    /api/servers/:guild_id
+PUT    /api/servers/:guild_id/config
+GET    /api/servers/:guild_id/stats
+GET    /api/servers/:guild_id/channels
+GET    /api/servers/:guild_id/roles
+
+// Moderation
+GET    /api/servers/:guild_id/infractions
+POST   /api/servers/:guild_id/infractions
+DELETE /api/servers/:guild_id/infractions/:id
+GET    /api/servers/:guild_id/automod
+PUT    /api/servers/:guild_id/automod
+
+// Leveling
+GET    /api/servers/:guild_id/leaderboard
+GET    /api/servers/:guild_id/levels/config
+PUT    /api/servers/:guild_id/levels/config
+POST   /api/servers/:guild_id/levels/rewards
+PUT    /api/users/:user_id/xp
+GET    /api/users/:user_id/profile
+
+// AI
+GET    /api/ai/config
+PUT    /api/ai/config
+GET    /api/ai/stats
+POST   /api/ai/test
+GET    /api/servers/:guild_id/ai/settings
+PUT    /api/servers/:guild_id/ai/settings
+GET    /api/servers/:guild_id/ai/conversations
+
+// Custom Commands
+GET    /api/servers/:guild_id/commands
+POST   /api/servers/:guild_id/commands
+PUT    /api/servers/:guild_id/commands/:id
+DELETE /api/servers/:guild_id/commands/:id
+
+// Reaction Roles
+GET    /api/servers/:guild_id/reactionroles
+POST   /api/servers/:guild_id/reactionroles
+PUT    /api/servers/:guild_id/reactionroles/:id
+DELETE /api/servers/:guild_id/reactionroles/:id
+
+// Welcome/Farewell
+GET    /api/servers/:guild_id/welcome
+PUT    /api/servers/:guild_id/welcome
+GET    /api/servers/:guild_id/farewell
+PUT    /api/servers/:guild_id/farewell
+
+// Analytics
+GET    /api/servers/:guild_id/analytics
+GET    /api/servers/:guild_id/activity
+GET    /api/servers/:guild_id/command-stats
+GET    /api/analytics/global
+
+// Logs
+GET    /api/logs
+GET    /api/logs/stream (WebSocket)
+GET    /api/logs/download
+
+// System
+GET    /api/system/health
+GET    /api/system/metrics
+POST   /api/system/backup
+POST   /api/system/restore
+```
+
+### 7. Dashboard Screenshots/Mockup Descriptions
+
+#### Homepage Layout
+```
+┌─────────────────────────────────────────────────────────────┐
+│ [Logo] Discord Bot Manager          [User] [Settings] [Logout]│
+├─────────────────────────────────────────────────────────────┤
+│ Sidebar              │  Main Content Area                    │
+│                      │                                       │
+│ ├─ Dashboard         │  ┌────────────┐ ┌────────────┐      │
+│ ├─ Servers           │  │ Bot Status │ │ Statistics │      │
+│ ├─ Moderation        │  │  ● Online  │ │ 15 Servers │      │
+│ ├─ Leveling          │  │  45ms ping │ │ 15.2K Users│      │
+│ ├─ AI Config         │  └────────────┘ └────────────┘      │
+│ ├─ Custom Commands   │                                       │
+│ ├─ Reaction Roles    │  ┌───────────────────────────────┐  │
+│ ├─ Welcome/Farewell  │  │  Activity Chart (24h)         │  │
+│ ├─ Analytics         │  │  [Line graph showing activity]│  │
+│ ├─ Logs              │  └───────────────────────────────┘  │
+│ └─ Settings          │                                       │
+│                      │  Recent Alerts:                       │
+│                      │  ⚠ Auto-mod triggered 3 times         │
+│                      │  ℹ Server "Example" added bot         │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 8. Deployment & Access
+
+#### Local Hosting
+```bash
+# Start the dashboard
+npm run dashboard
+# or
+python dashboard.py
+
+# Dashboard runs on http://localhost:3000
+# Bot and dashboard run as separate processes
+# Dashboard communicates with bot via REST API + WebSocket
+```
+
+#### Docker Deployment
+```yaml
+# docker-compose.yml
+version: '3.8'
+services:
+  bot:
+    build: ./bot
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - postgres
+      - redis
+  
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - API_URL=http://bot:8080
+    depends_on:
+      - bot
+  
+  postgres:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  
+  redis:
+    image: redis:7-alpine
+```
+
+### 9. Security Features
+
+- **Authentication**
+  - Secure password hashing (bcrypt/argon2)
+  - JWT tokens with expiration
+  - Optional 2FA
+  - Session management
+  
+- **Authorization**
+  - Role-based access control (Admin/Moderator/Viewer)
+  - Per-feature permissions
+  - Audit logging for all actions
+  
+- **Network Security**
+  - HTTPS support with self-signed or Let's Encrypt certs
+  - CORS configuration
+  - Rate limiting (prevent brute force)
+  - IP whitelisting (optional)
+  
+- **Data Protection**
+  - Sensitive data masking (tokens, API keys)
+  - Encrypted configuration storage
+  - Secure credential storage
+  - GDPR-compliant data export/deletion
+
+### 10. Dashboard Implementation Plan
+
+#### Dashboard-Specific Phases
+
+**Phase 1: Core Dashboard (Week 3-4)**
+- [ ] Set up React/Vue project
+- [ ] Create authentication system
+- [ ] Build basic layout and navigation
+- [ ] Implement bot status monitoring
+- [ ] Create homepage dashboard
+
+**Phase 2: Configuration Pages (Week 5-6)**
+- [ ] Server management interface
+- [ ] Moderation settings page
+- [ ] Leveling configuration page
+- [ ] Permission management UI
+
+**Phase 3: Advanced Features (Week 7-8)**
+- [ ] AI configuration interface
+- [ ] Custom commands manager
+- [ ] Reaction roles builder
+- [ ] Welcome/farewell editor
+
+**Phase 4: Analytics & Monitoring (Week 9-10)**
+- [ ] Analytics dashboard with charts
+- [ ] Real-time log viewer
+- [ ] User profile pages
+- [ ] Export functionality
+
+**Phase 5: Polish & Testing (Week 11-12)**
+- [ ] Mobile responsiveness
+- [ ] Dark mode toggle
+- [ ] Performance optimization
+- [ ] Comprehensive testing
+- [ ] Documentation
+
+---
+
 ## Permission & Security System
 
 ### 1. Role-Based Access Control
@@ -274,6 +1131,15 @@ A comprehensive Discord bot that combines traditional community management featu
   - Language: Python 3.11+ or JavaScript/TypeScript (Node.js)
   - Discord Library: discord.py (Python) or discord.js (JavaScript)
   
+- **Web Dashboard**
+  - Frontend: React.js + TypeScript or Vue.js 3
+  - UI Library: Shadcn/ui, Ant Design, or Material-UI
+  - Styling: Tailwind CSS
+  - Charts: Chart.js or Recharts
+  - State Management: Redux Toolkit or Pinia
+  - Backend API: Express.js (Node.js) or FastAPI (Python)
+  - Real-time: WebSocket (Socket.io or native WebSocket)
+  
 - **AI Integration**
   - Primary: OpenAI GPT-4 API or Claude API
   - Alternative: Local LLM (Llama 3, Mistral) for cost-effectiveness
@@ -281,18 +1147,42 @@ A comprehensive Discord bot that combines traditional community management featu
   
 - **Database**
   - Primary: PostgreSQL (relational data: users, levels, settings)
-  - Cache: Redis (session data, rate limiting, temporary storage)
+  - Cache: Redis (session data, rate limiting, temporary storage, dashboard sessions)
   - Optional: Vector DB (Pinecone/Weaviate) for AI memory
   
 - **Infrastructure**
   - Hosting: VPS (DigitalOcean, AWS, Hetzner) or containerized (Docker)
   - Message Queue: RabbitMQ or Redis (for handling high load)
   - Logging: ELK Stack or Grafana + Loki
+  - Reverse Proxy: Nginx (for dashboard HTTPS)
 
 ### 2. System Components
 
 ```
-┌─────────────────────────────────────────────────────────────┐
+                    ┌─────────────────────────┐
+                    │    User's Browser       │
+                    │   (Web Dashboard UI)    │
+                    └───────────┬─────────────┘
+                                │ HTTPS
+                                ▼
+┌───────────────────────────────────────────────────────────────┐
+│                    Dashboard Backend (API)                     │
+│  - REST API Endpoints                                          │
+│  - WebSocket Server (real-time updates)                        │
+│  - Authentication & Authorization                              │
+│  - Session Management                                          │
+└───────────────────────────┬───────────────────────────────────┘
+                            │
+        ┌───────────────────┼───────────────────┐
+        │                   │                   │
+┌───────▼─────────┐ ┌───────▼─────────┐ ┌──────▼────────┐
+│  Discord Bot    │ │   PostgreSQL    │ │     Redis     │
+│     Core        │ │    Database     │ │  (Sessions &  │
+│                 │ │                 │ │     Cache)    │
+└───────┬─────────┘ └─────────────────┘ └───────────────┘
+        │
+        │
+┌───────▼─────────────────────────────────────────────────────┐
 │                     Discord Gateway                          │
 └────────────────────────┬────────────────────────────────────┘
                          │
@@ -321,7 +1211,7 @@ A comprehensive Discord bot that combines traditional community management featu
 ### 3. Database Schema (Key Tables)
 
 ```sql
--- Users
+-- Users (Discord)
 users (
     user_id BIGINT PRIMARY KEY,
     username VARCHAR(255),
@@ -330,6 +1220,30 @@ users (
     message_count INT DEFAULT 0,
     voice_time INT DEFAULT 0,
     last_xp_gain TIMESTAMP,
+    created_at TIMESTAMP
+)
+
+-- Dashboard Users (Web UI Access)
+dashboard_users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    role VARCHAR(50) DEFAULT 'viewer', -- admin, moderator, viewer
+    two_fa_secret VARCHAR(255),
+    last_login TIMESTAMP,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+)
+
+-- Dashboard Sessions
+dashboard_sessions (
+    id VARCHAR(255) PRIMARY KEY,
+    user_id INT REFERENCES dashboard_users(id),
+    token VARCHAR(500),
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    expires_at TIMESTAMP,
     created_at TIMESTAMP
 )
 
@@ -395,6 +1309,30 @@ custom_commands (
     response TEXT,
     response_type VARCHAR(50), -- text, embed, image
     required_role BIGINT,
+    usage_count INT DEFAULT 0,
+    created_at TIMESTAMP
+)
+
+-- Reaction Roles
+reaction_roles (
+    id SERIAL PRIMARY KEY,
+    guild_id BIGINT,
+    message_id BIGINT,
+    channel_id BIGINT,
+    emoji VARCHAR(100),
+    role_id BIGINT,
+    created_at TIMESTAMP
+)
+
+-- Audit Log (Dashboard Actions)
+audit_log (
+    id SERIAL PRIMARY KEY,
+    dashboard_user_id INT REFERENCES dashboard_users(id),
+    action VARCHAR(100),
+    target_type VARCHAR(50), -- server, user, config, etc.
+    target_id VARCHAR(255),
+    changes JSONB,
+    ip_address VARCHAR(45),
     created_at TIMESTAMP
 )
 ```
@@ -454,6 +1392,7 @@ User Message
 ## Implementation Phases
 
 ### Phase 1: Foundation (Weeks 1-2)
+**Bot Core:**
 - [ ] Set up project structure and dependencies
 - [ ] Implement Discord bot connection
 - [ ] Database setup and schema creation
@@ -462,7 +1401,16 @@ User Message
 - [ ] Configuration system
 - [ ] Logging system
 
+**Dashboard:**
+- [ ] Set up React/Vue project structure
+- [ ] Create basic authentication system
+- [ ] Implement dashboard backend API (Express/FastAPI)
+- [ ] Build basic layout and navigation
+- [ ] Create login page
+- [ ] Implement bot status monitoring endpoint
+
 ### Phase 2: Core Moderation (Weeks 3-4)
+**Bot Core:**
 - [ ] Implement moderation commands (warn, mute, kick, ban)
 - [ ] Auto-moderation features (spam, profanity, links)
 - [ ] Infraction tracking system
@@ -470,7 +1418,15 @@ User Message
 - [ ] Message bulk deletion
 - [ ] User history tracking
 
+**Dashboard:**
+- [ ] Server management interface
+- [ ] Moderation settings page
+- [ ] Infractions viewer/manager
+- [ ] Auto-moderation configuration UI
+- [ ] Real-time moderation event display
+
 ### Phase 3: Leveling System (Weeks 5-6)
+**Bot Core:**
 - [ ] XP gain mechanics
 - [ ] Level calculation and progression
 - [ ] Role rewards system
@@ -478,7 +1434,16 @@ User Message
 - [ ] Voice channel XP tracking
 - [ ] XP management commands
 
+**Dashboard:**
+- [ ] Leveling configuration interface
+- [ ] Role rewards manager
+- [ ] Leaderboard viewer
+- [ ] XP adjustment tools
+- [ ] Rank card customizer
+- [ ] Level statistics charts
+
 ### Phase 4: Community Features (Weeks 7-8)
+**Bot Core:**
 - [ ] Welcome/farewell system
 - [ ] Reaction roles
 - [ ] Custom commands
@@ -486,7 +1451,15 @@ User Message
 - [ ] Announcements system
 - [ ] Server utilities
 
+**Dashboard:**
+- [ ] Welcome/farewell message editor
+- [ ] Reaction roles builder (drag-and-drop)
+- [ ] Custom commands manager
+- [ ] Announcement scheduler
+- [ ] Poll creator interface
+
 ### Phase 5: AI Integration (Weeks 9-11)
+**Bot Core:**
 - [ ] AI API integration (OpenAI/Claude)
 - [ ] Conversation context management
 - [ ] Engagement decision engine
@@ -495,7 +1468,17 @@ User Message
 - [ ] AI configuration commands
 - [ ] Context memory and retrieval
 
-### Phase 6: Advanced AI (Weeks 12-13)
+**Dashboard:**
+- [ ] AI configuration center
+- [ ] Personality editor
+- [ ] Engagement rules interface
+- [ ] Channel whitelist/blacklist manager
+- [ ] Trigger keywords editor
+- [ ] AI conversation viewer
+- [ ] AI analytics dashboard
+
+### Phase 6: Advanced AI & Analytics (Weeks 12-13)
+**Bot Core:**
 - [ ] Random conversation joining
 - [ ] Sentiment analysis
 - [ ] Topic tracking
@@ -503,21 +1486,41 @@ User Message
 - [ ] Multi-turn dialogue
 - [ ] AI safety measures
 
+**Dashboard:**
+- [ ] Advanced analytics dashboard
+- [ ] Activity charts and graphs
+- [ ] Command usage statistics
+- [ ] User analytics
+- [ ] AI performance metrics
+- [ ] Export functionality (CSV/JSON/PDF)
+
 ### Phase 7: Polish & Optimization (Weeks 14-15)
+**Bot Core:**
 - [ ] Performance optimization
 - [ ] Caching implementation
 - [ ] Rate limiting refinement
 - [ ] Error handling improvements
-- [ ] Analytics dashboard
-- [ ] Documentation
+
+**Dashboard:**
+- [ ] Real-time log viewer with filtering
+- [ ] System health monitoring
+- [ ] Performance optimization
+- [ ] Mobile responsiveness
+- [ ] Dark mode implementation
+- [ ] PWA features
+- [ ] Comprehensive error handling
 
 ### Phase 8: Testing & Deployment (Week 16)
-- [ ] Comprehensive testing
+**Both:**
+- [ ] Comprehensive testing (unit, integration, e2e)
 - [ ] Beta testing in real servers
-- [ ] Bug fixes
-- [ ] Production deployment
-- [ ] Monitoring setup
+- [ ] Bug fixes and refinements
+- [ ] Production deployment setup
+- [ ] Docker containerization
+- [ ] Monitoring and alerting setup
 - [ ] User documentation
+- [ ] Video tutorials for dashboard
+- [ ] Quick start guide
 
 ---
 
@@ -533,6 +1536,19 @@ bot:
   prefix: "/"
   status: "online"
   activity: "Watching your server"
+
+dashboard:
+  enabled: true
+  port: 3000
+  host: "0.0.0.0"
+  https: false
+  cert_path: null  # for HTTPS
+  key_path: null   # for HTTPS
+  secret_key: "CHANGE_THIS_SECRET"  # for JWT tokens
+  session_timeout: 86400  # 24 hours in seconds
+  cors_origins:
+    - "http://localhost:3000"
+    - "http://localhost:3001"
 
 database:
   host: "localhost"
@@ -569,6 +1585,8 @@ leveling:
 logging:
   level: "INFO"
   log_channel_id: null  # set during setup
+  file_logging: true
+  log_retention_days: 30
   
 permissions:
   moderator_roles: []  # configured per server
@@ -578,6 +1596,14 @@ permissions:
 
 ### Setup Command Flow
 
+**Via Web Dashboard (Recommended):**
+1. Navigate to `http://localhost:3000`
+2. Create admin account (first-time setup)
+3. Follow interactive setup wizard (see Web Dashboard section)
+4. Configure bot token, database, AI, and server settings
+5. Dashboard automatically starts bot service
+
+**Via Discord Commands (Alternative):**
 1. `/setup start` - Begins setup wizard
 2. Bot asks for mod log channel
 3. Bot asks for moderator roles
@@ -585,6 +1611,127 @@ permissions:
 5. Bot configures XP system
 6. Bot configures AI features
 7. `/setup complete` - Finishes setup
+
+---
+
+## Project Structure
+
+### Recommended Directory Layout
+
+```
+discord-bot/
+├── bot/                          # Discord bot application
+│   ├── main.py / index.ts        # Bot entry point
+│   ├── cogs/ or commands/        # Command modules
+│   │   ├── moderation.py
+│   │   ├── leveling.py
+│   │   ├── ai.py
+│   │   └── ...
+│   ├── modules/                  # Core functionality
+│   │   ├── database.py
+│   │   ├── permissions.py
+│   │   ├── ai_engine.py
+│   │   └── ...
+│   ├── utils/                    # Helper functions
+│   ├── config/                   # Configuration files
+│   └── requirements.txt / package.json
+│
+├── dashboard/                    # Web dashboard
+│   ├── frontend/                 # React/Vue app
+│   │   ├── src/
+│   │   │   ├── components/       # UI components
+│   │   │   ├── pages/            # Page components
+│   │   │   ├── services/         # API clients
+│   │   │   ├── store/            # State management
+│   │   │   ├── hooks/            # Custom hooks
+│   │   │   ├── utils/            # Helper functions
+│   │   │   ├── App.tsx
+│   │   │   └── main.tsx
+│   │   ├── public/
+│   │   ├── package.json
+│   │   └── vite.config.ts / webpack.config.js
+│   │
+│   └── backend/                  # API server
+│       ├── server.py / server.ts # API entry point
+│       ├── routes/               # API routes
+│       │   ├── auth.py
+│       │   ├── servers.py
+│       │   ├── moderation.py
+│       │   ├── ai.py
+│       │   └── ...
+│       ├── middleware/            # Auth, CORS, etc.
+│       ├── models/                # Database models
+│       ├── services/              # Business logic
+│       └── utils/                 # Helpers
+│
+├── database/                     # Database scripts
+│   ├── migrations/               # Database migrations
+│   ├── seeds/                    # Seed data
+│   └── schema.sql                # Database schema
+│
+├── shared/                       # Shared code (optional)
+│   ├── types/                    # TypeScript types
+│   └── constants/                # Shared constants
+│
+├── config/                       # Configuration files
+│   ├── bot_config.yaml
+│   ├── dashboard_config.yaml
+│   └── .env.example
+│
+├── scripts/                      # Utility scripts
+│   ├── setup.sh
+│   ├── backup.sh
+│   └── deploy.sh
+│
+├── logs/                         # Log files
+│   ├── bot.log
+│   └── dashboard.log
+│
+├── tests/                        # Test files
+│   ├── bot/
+│   └── dashboard/
+│
+├── docker-compose.yml            # Docker setup
+├── Dockerfile                    # Container definition
+├── .gitignore
+└── README.md
+```
+
+### Running the Application
+
+**Development Mode:**
+```bash
+# Terminal 1: Start PostgreSQL and Redis
+docker-compose up -d postgres redis
+
+# Terminal 2: Start Discord Bot
+cd bot
+python main.py  # or npm run dev
+
+# Terminal 3: Start Dashboard Backend
+cd dashboard/backend
+python server.py  # or npm run dev
+
+# Terminal 4: Start Dashboard Frontend
+cd dashboard/frontend
+npm run dev
+
+# Access dashboard at http://localhost:3000
+```
+
+**Production Mode with Docker:**
+```bash
+# Build and start all services
+docker-compose up -d
+
+# Services:
+# - Bot: Running in background
+# - Dashboard API: Port 8080 (internal)
+# - Dashboard UI: Port 3000 (public)
+# - PostgreSQL: Port 5432 (internal)
+# - Redis: Port 6379 (internal)
+# - Nginx: Port 80/443 (reverse proxy)
+```
 
 ---
 
@@ -646,20 +1793,24 @@ Respond with JSON:
 
 ---
 
-## API Endpoints (Optional Web Dashboard)
+## Dashboard API Reference
 
-### REST API for Management
+The complete REST API documentation is included in the **Web Dashboard** section above. Key endpoint categories include:
 
-```
-GET  /api/servers/:guild_id/stats
-GET  /api/servers/:guild_id/leaderboard
-GET  /api/servers/:guild_id/config
-POST /api/servers/:guild_id/config
-GET  /api/servers/:guild_id/infractions
-GET  /api/users/:user_id/profile
-POST /api/ai/personality
-GET  /api/logs/:guild_id
-```
+- **Authentication** - Login, logout, session management
+- **Bot Management** - Status, restart, configuration
+- **Server Management** - List servers, configure settings
+- **Moderation** - Infractions, auto-mod settings
+- **Leveling** - XP management, leaderboards, role rewards
+- **AI Configuration** - Personality, engagement rules, statistics
+- **Custom Commands** - CRUD operations for commands
+- **Reaction Roles** - Setup and management
+- **Welcome/Farewell** - Message configuration
+- **Analytics** - Server stats, activity data, reports
+- **Logs** - View and filter bot logs
+- **System** - Health checks, backups, restore
+
+See the Web Dashboard section for detailed endpoint specifications.
 
 ---
 
