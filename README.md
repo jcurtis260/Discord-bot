@@ -122,6 +122,8 @@ Access dashboard at `http://localhost:3000` and log in with Discord.
 
 ## Docker Deployment
 
+### Option 1: Docker Compose (Command Line)
+
 ```bash
 # Copy and configure environment
 cp .env.example .env
@@ -133,6 +135,39 @@ docker-compose up -d
 # View logs
 docker-compose logs -f bot
 ```
+
+### Option 2: Portainer (Web UI - Recommended)
+
+**Easy visual management of your entire bot stack!**
+
+1. **Install Portainer:**
+```bash
+docker volume create portainer_data
+docker run -d -p 9443:9443 --name portainer --restart=always \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v portainer_data:/data \
+  portainer/portainer-ce:latest
+```
+
+2. **Access Portainer:** Open `https://localhost:9443`
+
+3. **Deploy bot stack:**
+   - Go to **Stacks** → **Add stack**
+   - Name: `discord-bot`
+   - Select **Git Repository**
+   - URL: `https://github.com/jcurtis260/Discord-bot.git`
+   - Branch: `cursor/discord-bot-plan-ea5f`
+   - Add your environment variables
+   - Click **Deploy**
+
+**Benefits:**
+- 🖥️ Web-based GUI - no command line needed
+- 📊 Live monitoring - CPU, memory, logs
+- 🔄 Easy updates - one-click redeploy
+- 🌐 Remote access - manage from anywhere
+- 📦 Stack management - start/stop/restart all services
+
+**📖 Full Guide:** See [`PORTAINER_DEPLOYMENT.md`](PORTAINER_DEPLOYMENT.md) for complete setup, security, backups, and troubleshooting.
 
 ## Configuration
 
@@ -384,6 +419,7 @@ For detailed information, see these guides:
 
 ### Essential Setup Guides
 - **[PORTAINER_DEPLOYMENT.md](PORTAINER_DEPLOYMENT.md)** - **NEW!** Deploy and manage your bot with Portainer's web UI (easiest method!)
+- **[CUSTOM_PORTS.md](CUSTOM_PORTS.md)** - **NEW!** Configure custom ports for the dashboard (use any port you want!)
 - **[DASHBOARD_SECURITY.md](DASHBOARD_SECURITY.md)** - Complete guide to securing the web dashboard with Discord OAuth2, API keys, and IP whitelisting
 - **[SETUP_GUIDE.md](SETUP_GUIDE.md)** - Step-by-step installation and configuration guide
 

@@ -67,7 +67,7 @@ services:
     networks:
       - bot-network
 
-  # Dashboard Backend (Optional)
+  # Dashboard Backend (Optional - Uncomment to enable)
   # dashboard-backend:
   #   build:
   #     context: ./dashboard/backend
@@ -82,13 +82,19 @@ services:
   #     DATABASE_URL: postgresql://bot_user:${DATABASE_PASSWORD:-changeme}@postgres:5432/discord_bot
   #     REDIS_URL: redis://redis:6379/0
   #     DASHBOARD_SECRET_KEY: ${DASHBOARD_SECRET_KEY}
+  #     DASHBOARD_HOST: ${DASHBOARD_HOST:-0.0.0.0}
+  #     DASHBOARD_PORT: ${DASHBOARD_BACKEND_INTERNAL_PORT:-8080}
+  #     BOT_OWNER_ID: ${BOT_OWNER_ID}
+  #     DASHBOARD_DISCORD_CLIENT_ID: ${DASHBOARD_DISCORD_CLIENT_ID}
+  #     DASHBOARD_DISCORD_CLIENT_SECRET: ${DASHBOARD_DISCORD_CLIENT_SECRET}
+  #     DASHBOARD_DISCORD_REDIRECT_URI: ${DASHBOARD_DISCORD_REDIRECT_URI}
   #   ports:
-  #     - "8080:8080"
+  #     - "${DASHBOARD_BACKEND_PORT:-8080}:${DASHBOARD_BACKEND_INTERNAL_PORT:-8080}"
   #   restart: unless-stopped
   #   networks:
   #     - bot-network
 
-  # Dashboard Frontend (Optional)
+  # Dashboard Frontend (Optional - Uncomment to enable)
   # dashboard-frontend:
   #   build:
   #     context: ./dashboard/frontend
@@ -97,9 +103,9 @@ services:
   #   depends_on:
   #     - dashboard-backend
   #   ports:
-  #     - "3000:3000"
+  #     - "${DASHBOARD_FRONTEND_PORT:-3000}:3000"
   #   environment:
-  #     VITE_API_URL: http://localhost:8080
+  #     VITE_API_URL: ${DASHBOARD_API_URL:-http://localhost:8080}
   #   restart: unless-stopped
   #   networks:
   #     - bot-network
