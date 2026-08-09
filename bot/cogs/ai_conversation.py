@@ -313,8 +313,8 @@ class AIConversation(commands.Cog):
             try:
                 referenced = await message.channel.fetch_message(message.reference.message_id)
                 is_reply_to_bot = referenced.author.id == self.bot.user.id
-            except:
-                pass
+            except (discord.NotFound, discord.Forbidden, discord.HTTPException):
+                pass  # Message not found or no access
         
         # Get AI config
         ai_config = await self.get_ai_config(message.guild.id)

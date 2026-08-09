@@ -140,8 +140,8 @@ class Games(commands.Cog):
         
         try:
             await asyncio.sleep(30)
-        except:
-            pass
+        except asyncio.CancelledError:
+            pass  # Task was cancelled, continue with results
         
         # Fetch final reactions
         message = await interaction.channel.fetch_message(message.id)
@@ -182,8 +182,8 @@ class Games(commands.Cog):
                         reward,
                         "Won trivia question"
                     )
-                except:
-                    pass
+                except Exception as e:
+                    logger.error(f"Failed to update balance for {winner.id}: {e}")
             
             result_embed.add_field(
                 name="💰 Reward",

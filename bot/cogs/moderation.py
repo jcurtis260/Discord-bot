@@ -84,8 +84,8 @@ class Moderation(commands.Cog):
             embed.add_field(name="Reason", value=reason, inline=False)
             embed.add_field(name="Moderator", value=interaction.user.mention, inline=False)
             await user.send(embed=embed)
-        except:
-            pass  # User has DMs disabled
+        except (discord.Forbidden, discord.HTTPException):
+            pass  # User has DMs disabled or delivery failed
         
         # Respond
         embed = discord.Embed(

@@ -18,11 +18,14 @@ from modules.config import config
 from modules.database import Database, RedisCache
 
 # Configure logging
+log_dir = Path(__file__).parent.parent / 'logs'
+log_dir.mkdir(parents=True, exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(Path(__file__).parent / '../logs/bot.log'),
+        logging.FileHandler(log_dir / 'bot.log'),
         logging.StreamHandler()
     ]
 )
